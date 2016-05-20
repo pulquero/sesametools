@@ -1,17 +1,17 @@
 package net.fortytwo.sesametools;
 
-import org.openrdf.model.Graph;
-import org.openrdf.model.Resource;
-import org.openrdf.model.Statement;
-import org.openrdf.model.URI;
-import org.openrdf.model.Value;
-import org.openrdf.model.ValueFactory;
-import org.openrdf.repository.RepositoryConnection;
-import org.openrdf.repository.RepositoryException;
-import org.openrdf.repository.RepositoryResult;
-
 import java.util.Collection;
 import java.util.Iterator;
+
+import org.eclipse.rdf4j.model.Graph;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.Resource;
+import org.eclipse.rdf4j.model.Statement;
+import org.eclipse.rdf4j.model.Value;
+import org.eclipse.rdf4j.model.ValueFactory;
+import org.eclipse.rdf4j.repository.RepositoryConnection;
+import org.eclipse.rdf4j.repository.RepositoryException;
+import org.eclipse.rdf4j.repository.RepositoryResult;
 
 /**
  * An adapter which wraps a RepositoryConnection as a Graph
@@ -31,7 +31,7 @@ public class RepositoryGraph implements Graph {
         return rc.getValueFactory();
     }
 
-    public boolean add(Resource s, URI p, Value o, Resource... c) {
+    public boolean add(Resource s, IRI p, Value o, Resource... c) {
         try {
             rc.begin();
             rc.add(s, p, o, c);
@@ -43,7 +43,7 @@ public class RepositoryGraph implements Graph {
     }
 
     // note: the returned iterator contains a CloseableIteration which will not be closed
-    public Iterator<Statement> match(Resource s, URI p, Value o, Resource... c) {
+    public Iterator<Statement> match(Resource s, IRI p, Value o, Resource... c) {
         RepositoryResult<Statement> result = null;
         try {
             result = rc.getStatements(s, p, o, INFER, c);

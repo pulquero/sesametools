@@ -1,13 +1,13 @@
 
 package net.fortytwo.sesametools;
 
-import org.openrdf.rio.RDFHandler;
-import org.openrdf.rio.RDFHandlerException;
-import org.openrdf.model.ValueFactory;
-import org.openrdf.model.Statement;
-import org.openrdf.model.URI;
-import org.openrdf.model.Resource;
-import org.openrdf.model.Value;
+import org.eclipse.rdf4j.rio.RDFHandler;
+import org.eclipse.rdf4j.rio.RDFHandlerException;
+import org.eclipse.rdf4j.model.ValueFactory;
+import org.eclipse.rdf4j.model.Statement;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.Resource;
+import org.eclipse.rdf4j.model.Value;
 
 /**
  * An <code>RDFHandler</code> which forces each received statement into a designated Named Graph context.
@@ -33,13 +33,13 @@ public class SingleContextHandler implements RDFHandler {
         baseHandler.endRDF();
     }
 
-    public void handleNamespace(final String prefix, final String uri) throws RDFHandlerException {
-        baseHandler.handleNamespace(prefix, uri);
+    public void handleNamespace(final String prefix, final String IRI) throws RDFHandlerException {
+        baseHandler.handleNamespace(prefix, IRI);
     }
 
     public void handleStatement(final Statement st) throws RDFHandlerException {
         Resource subj = st.getSubject();
-        URI pred = st.getPredicate();
+        IRI pred = st.getPredicate();
         Value obj = st.getObject();
 
         Statement newSt = valueFactory.createStatement(subj, pred, obj, context);

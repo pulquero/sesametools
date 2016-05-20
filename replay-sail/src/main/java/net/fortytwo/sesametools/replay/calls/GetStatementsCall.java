@@ -2,12 +2,12 @@
 package net.fortytwo.sesametools.replay.calls;
 
 import net.fortytwo.sesametools.replay.SailConnectionCall;
-import info.aduna.iteration.CloseableIteration;
-import org.openrdf.model.Resource;
-import org.openrdf.model.URI;
-import org.openrdf.model.Value;
-import org.openrdf.sail.SailConnection;
-import org.openrdf.sail.SailException;
+import org.eclipse.rdf4j.common.iteration.CloseableIteration;
+import org.eclipse.rdf4j.model.Resource;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.Value;
+import org.eclipse.rdf4j.sail.SailConnection;
+import org.eclipse.rdf4j.sail.SailException;
 
 import java.util.StringTokenizer;
 
@@ -17,14 +17,14 @@ import java.util.StringTokenizer;
 public class GetStatementsCall extends SailConnectionCall<SailConnection, CloseableIteration> {
 
     private final Resource subject;
-    private final URI predicate;
+    private final IRI predicate;
     private final Value object;
     private final boolean includeInferred;
     private final Resource[] contexts;
 
     public GetStatementsCall(final String id,
                              final Resource subj,
-                             final URI pred,
+                             final IRI pred,
                              final Value obj,
                              final boolean includeInferred,
                              final Resource... contexts) {
@@ -52,7 +52,7 @@ public class GetStatementsCall extends SailConnectionCall<SailConnection, Closea
                              final StringTokenizer tok) {
         super(id, type);
         this.subject = parseResource(tok.nextToken());
-        this.predicate = parseURI(tok.nextToken());
+        this.predicate = parseIRI(tok.nextToken());
         this.object = parseValue(tok.nextToken());
         this.includeInferred = parseBoolean(tok.nextToken());
         this.contexts = parseContexts(tok.nextToken());

@@ -1,9 +1,9 @@
 package net.fortytwo.sesametools;
 
-import org.openrdf.model.BNode;
-import org.openrdf.model.Literal;
-import org.openrdf.model.URI;
-import org.openrdf.model.Value;
+import org.eclipse.rdf4j.model.BNode;
+import org.eclipse.rdf4j.model.Literal;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.Value;
 
 import java.util.Comparator;
 
@@ -12,7 +12,7 @@ import java.util.Comparator;
  * the order for Values is:
  * <ol>
  * <li> Blank Node's </li>
- * <li> URI's </li>
+ * <li> IRI's </li>
  * <li> Literals </li>
  * </ol>
  * <p>
@@ -39,7 +39,7 @@ public class ValueComparator implements Comparator<Value> {
     public final static int AFTER = 1;
 
     /**
-     * Sorts in the order nulls&gt;BNodes&gt;URIs&gt;Literals
+     * Sorts in the order nulls&gt;BNodes&gt;IRIs&gt;Literals
      * <p>
      * This is due to the fact that nulls are only applicable to contexts,
      * and according to the OpenRDF documentation, the type of the null
@@ -83,14 +83,14 @@ public class ValueComparator implements Comparator<Value> {
         } else if (second instanceof BNode) {
             // sort BNodes before other things, and first was not a BNode
             return AFTER;
-        } else if (first instanceof URI) {
-            if (second instanceof URI) {
-                return ((URI) first).stringValue().compareTo(((URI) second).stringValue());
+        } else if (first instanceof IRI) {
+            if (second instanceof IRI) {
+                return ((IRI) first).stringValue().compareTo(((IRI) second).stringValue());
             } else {
                 return BEFORE;
             }
-        } else if (second instanceof URI) {
-            // sort URIs before Literals
+        } else if (second instanceof IRI) {
+            // sort IRIs before Literals
             return AFTER;
         }
         // they must both be Literal's, so sort based on the lexical value of the Literal
@@ -112,8 +112,8 @@ public class ValueComparator implements Comparator<Value> {
                     return BEFORE;
                 }
 
-                URI firstType = firstLiteral.getDatatype();
-                URI secondType = secondLiteral.getDatatype();
+                IRI firstType = firstLiteral.getDatatype();
+                IRI secondType = secondLiteral.getDatatype();
                 if (null == firstType) {
                     if (null == secondType) {
                         return EQUALS;

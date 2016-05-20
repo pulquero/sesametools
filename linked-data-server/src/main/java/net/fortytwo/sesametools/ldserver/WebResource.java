@@ -1,22 +1,5 @@
 package net.fortytwo.sesametools.ldserver;
 
-import info.aduna.iteration.CloseableIteration;
-import org.openrdf.model.Namespace;
-import org.openrdf.model.Statement;
-import org.openrdf.model.URI;
-import org.openrdf.model.ValueFactory;
-import org.openrdf.model.vocabulary.RDF;
-import org.openrdf.model.vocabulary.RDFS;
-import org.openrdf.rio.RDFFormat;
-import org.openrdf.sail.Sail;
-import org.openrdf.sail.SailConnection;
-import org.openrdf.sail.SailException;
-import org.restlet.data.MediaType;
-import org.restlet.representation.Representation;
-import org.restlet.representation.Variant;
-import org.restlet.resource.Get;
-import org.restlet.resource.ServerResource;
-
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.Collection;
@@ -26,11 +9,29 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.eclipse.rdf4j.common.iteration.CloseableIteration;
+import org.eclipse.rdf4j.model.Namespace;
+import org.eclipse.rdf4j.model.Statement;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.ValueFactory;
+import org.eclipse.rdf4j.model.vocabulary.RDF;
+import org.eclipse.rdf4j.model.vocabulary.RDFS;
+import org.eclipse.rdf4j.rio.RDFFormat;
+import org.eclipse.rdf4j.rio.Rio;
+import org.eclipse.rdf4j.sail.Sail;
+import org.eclipse.rdf4j.sail.SailConnection;
+import org.eclipse.rdf4j.sail.SailException;
+import org.restlet.data.MediaType;
+import org.restlet.representation.Representation;
+import org.restlet.representation.Variant;
+import org.restlet.resource.Get;
+import org.restlet.resource.ServerResource;
+
 /**
- * Information and non-information resources are distinguished by the suffix of the resource's URI:
- * information resource URIs end in .rdf or .trig,
+ * Information and non-information resources are distinguished by the suffix of the resource's IRI:
+ * information resource IRIs end in .rdf or .trig,
  * while non-information resources have no such suffix
- * (and LinkedDataServer will not make statements about such URIs).
+ * (and LinkedDataServer will not make statements about such IRIs).
  * A request for an information resource is fulfilled with the resource itself.  No content negotiation occurs.
  * A request for a non-information resource is fulfilled with a 303-redirect
  * to an information resource of the appropriate media type.
@@ -44,16 +45,16 @@ public class WebResource extends ServerResource {
         InformationResource, NonInformationResource
     }
 
-    protected String selfURI;
+    protected String selfIRI;
 
     protected String hostIdentifier;
     protected String baseRef;
-    protected String subjectResourceURI;
+    protected String subjectResourceIRI;
     protected String typeSpecificId;
     protected WebResourceCategory webResourceCategory;
     protected Sail sail;
     protected RDFFormat format = null;
-    protected URI datasetURI;
+    protected IRI datasetIRI;
 
     public WebResource() throws Exception {
         super();
@@ -71,10 +72,10 @@ public class WebResource extends ServerResource {
 
     @Get
     public Representation get(final Variant variant) {
-        selfURI = this.getRequest().getResourceRef().toString();
+        selfIRI = this.getRequest().getResourceRef().toString();
 
         /*
-        System.out.println("selfURI = " + selfURI);
+        System.out.println("selfIRI = " + selfIRI);
         System.out.println("request: " + this.getRequest());
         Request request = this.getRequest();
         System.out.println("baseRef = " + request.getResourceRef().getBaseRef());
@@ -84,9 +85,9 @@ public class WebResource extends ServerResource {
         System.out.println("host ref = " + request.getHostRef().toString());
         //*/
 
-        int i = selfURI.lastIndexOf(".");
+        int i = selfIRI.lastIndexOf(".");
         if (i > 0) {
-            format = RDFFormat.forFileName(selfURI);
+            format = Rio.getParserFormatForFileName(selfIRI);
         }
 
         if (null == format) {
@@ -98,9 +99,9 @@ public class WebResource extends ServerResource {
 
             hostIdentifier = this.getRequest().getResourceRef().getHostIdentifier();
             baseRef = this.getRequest().getResourceRef().getBaseRef().toString();
-            subjectResourceURI = selfURI.substring(0, i);
-            typeSpecificId = subjectResourceURI.substring(baseRef.length());
-            datasetURI = LinkedDataServer.getInstance().getDatasetURI();
+            subjectResourceIRI = selfIRI.substring(0, i);
+            typeSpecificId = subjectResourceIRI.substring(baseRef.length());
+            datasetIRI = LinkedDataServer.getInstance().getDatasetIRI();
             sail = LinkedDataServer.getInstance().getSail();
         }
 
@@ -119,7 +120,7 @@ public class WebResource extends ServerResource {
     private Representation representInformationResource() {
         try {
             preprocessingHook();
-            URI subject = sail.getValueFactory().createURI(subjectResourceURI);
+            IRI subject = sail.getValueFactory().createIRI(subjectResourceIRI);
             Representation result = getRDFRepresentation(subject, format);
             postProcessingHook();
             return result;
@@ -139,12 +140,12 @@ public class WebResource extends ServerResource {
             throw new IllegalStateException("no suffix for RDF format " + type);
         }
 
-        getResponse().redirectSeeOther(selfURI + "." + suffix);
+        getResponse().redirectSeeOther(selfIRI + "." + suffix);
 
         return null;
     }
 
-    private void addIncidentStatements(final org.openrdf.model.Resource vertex,
+    private void addIncidentStatements(final org.eclipse.rdf4j.model.Resource vertex,
                                        final Collection<Statement> statements,
                                        final SailConnection c) throws SailException {
         // Select outbound statements
@@ -176,21 +177,21 @@ public class WebResource extends ServerResource {
     }
 
     // Note: a SPARQL query might be more efficient in some applications
-    private void addSeeAlsoStatements(final org.openrdf.model.Resource subject,
+    private void addSeeAlsoStatements(final org.eclipse.rdf4j.model.Resource subject,
                                       final Collection<Statement> statements,
                                       final SailConnection c,
                                       final ValueFactory vf) throws SailException {
-        Set<URI> contexts = new HashSet<URI>();
+        Set<IRI> contexts = new HashSet<IRI>();
         CloseableIteration<? extends Statement, SailException> iter
                 = c.getStatements(subject, null, null, false);
         try {
             while (iter.hasNext()) {
                 Statement st = iter.next();
-                org.openrdf.model.Resource context = st.getContext();
+                org.eclipse.rdf4j.model.Resource context = st.getContext();
 
                 if (null != context) {
-                    if (context instanceof URI && context.toString().startsWith(hostIdentifier)) {
-                        contexts.add((URI) context);
+                    if (context instanceof IRI && context.toString().startsWith(hostIdentifier)) {
+                        contexts.add((IRI) context);
                     }
                 }
             }
@@ -202,11 +203,11 @@ public class WebResource extends ServerResource {
         try {
             while (iter.hasNext()) {
                 Statement st = iter.next();
-                org.openrdf.model.Resource context = st.getContext();
+                org.eclipse.rdf4j.model.Resource context = st.getContext();
 
                 if (null != context) {
-                    if (context instanceof URI && context.toString().startsWith(hostIdentifier)) {
-                        contexts.add((URI) context);
+                    if (context instanceof IRI && context.toString().startsWith(hostIdentifier)) {
+                        contexts.add((IRI) context);
                     }
                 }
             }
@@ -214,7 +215,7 @@ public class WebResource extends ServerResource {
             iter.close();
         }
 
-        for (URI r : contexts) {
+        for (IRI r : contexts) {
             statements.add(vf.createStatement(subject, RDFS.SEEALSO, r));
         }
     }
@@ -222,17 +223,17 @@ public class WebResource extends ServerResource {
     private void addDocumentMetadata(final Collection<Statement> statements,
                                      final ValueFactory vf) throws SailException {
         // Metadata about the document itself
-        URI docURI = vf.createURI(selfURI);
-        statements.add(vf.createStatement(docURI, RDF.TYPE, vf.createURI("http://xmlns.com/foaf/0.1/Document")));
-        statements.add(vf.createStatement(docURI, RDFS.LABEL,
+        IRI docIRI = vf.createIRI(selfIRI);
+        statements.add(vf.createStatement(docIRI, RDF.TYPE, vf.createIRI("http://xmlns.com/foaf/0.1/Document")));
+        statements.add(vf.createStatement(docIRI, RDFS.LABEL,
                 vf.createLiteral("" + format.getName() + " description of resource '"
                         + typeSpecificId + "'")));
 
-        // Note: we go to the trouble of special-casing the dataset URI, so that
+        // Note: we go to the trouble of special-casing the dataset IRI, so that
         // it is properly rewritten, along with all other TwitLogic resource
-        // URIs (which are rewritten through the Sail).
-        if (null != datasetURI) {
-            statements.add(vf.createStatement(docURI, RDFS.SEEALSO, datasetURI));
+        // IRIs (which are rewritten through the Sail).
+        if (null != datasetIRI) {
+            statements.add(vf.createStatement(docIRI, RDFS.SEEALSO, datasetIRI));
         }
     }
 
@@ -240,7 +241,7 @@ public class WebResource extends ServerResource {
         return "resource";
     }
 
-    private Representation getRDFRepresentation(final URI subject,
+    private Representation getRDFRepresentation(final IRI subject,
                                                 final RDFFormat format) {
         try {
             Collection<Namespace> namespaces = new LinkedList<Namespace>();

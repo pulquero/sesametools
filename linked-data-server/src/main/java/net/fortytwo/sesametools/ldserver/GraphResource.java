@@ -1,37 +1,37 @@
 package net.fortytwo.sesametools.ldserver;
 
-import info.aduna.iteration.CloseableIteration;
-import org.openrdf.model.Namespace;
-import org.openrdf.model.Statement;
-import org.openrdf.model.URI;
-import org.openrdf.rio.RDFFormat;
-import org.openrdf.sail.Sail;
-import org.openrdf.sail.SailConnection;
-import org.openrdf.sail.SailException;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import org.eclipse.rdf4j.common.iteration.CloseableIteration;
+import org.eclipse.rdf4j.model.Namespace;
+import org.eclipse.rdf4j.model.Statement;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.rio.RDFFormat;
+import org.eclipse.rdf4j.sail.Sail;
+import org.eclipse.rdf4j.sail.SailConnection;
+import org.eclipse.rdf4j.sail.SailException;
 import org.restlet.data.MediaType;
 import org.restlet.representation.Representation;
 import org.restlet.representation.Variant;
 import org.restlet.resource.Get;
 import org.restlet.resource.ServerResource;
 
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 /**
  * Graph resources are information resources which (in the present schema) do not use suffixes identifying the RDF
  * format (e.g. .rdf or .ttl).  Instead, they use content negotiation to serve an appropriate representation against
- * the URI of the graph, without redirection.
+ * the IRI of the graph, without redirection.
  * <p>
- * This conforms to the common expectation that RDF documents and corresponding named graphs have the same URI.
+ * This conforms to the common expectation that RDF documents and corresponding named graphs have the same IRI.
  *
  * @author Joshua Shinavier (http://fortytwo.net)
  */
 public class GraphResource extends ServerResource {
     private static final Logger logger = Logger.getLogger(GraphResource.class.getName());
 
-    protected String selfURI;
+    protected String selfIRI;
 
     protected Sail sail;
 
@@ -48,10 +48,10 @@ public class GraphResource extends ServerResource {
     public Representation get(final Variant entity) {
         MediaType type = entity.getMediaType();
         RDFFormat format = RDFMediaTypes.findRdfFormat(type);
-        selfURI = this.getRequest().getResourceRef().toString();
+        selfIRI = this.getRequest().getResourceRef().toString();
 
         /*
-        System.out.println("selfURI = " + selfURI);
+        System.out.println("selfIRI = " + selfIRI);
         System.out.println("baseRef = " + request.getResourceRef().getBaseRef());
         System.out.println("host domain = " + request.getResourceRef().getHostDomain());
         System.out.println("host identifier = " + request.getResourceRef().getHostIdentifier());
@@ -60,7 +60,7 @@ public class GraphResource extends ServerResource {
         //*/
 
         try {
-            URI subject = sail.getValueFactory().createURI(selfURI);
+            IRI subject = sail.getValueFactory().createIRI(selfIRI);
             return getRDFRepresentation(subject, format);
         } catch (Throwable t) {
             t.printStackTrace();
@@ -68,7 +68,7 @@ public class GraphResource extends ServerResource {
         }
     }
 
-    private void addStatementsInGraph(final org.openrdf.model.Resource graph,
+    private void addStatementsInGraph(final org.eclipse.rdf4j.model.Resource graph,
                                       final Collection<Statement> statements,
                                       final SailConnection c) throws SailException {
         CloseableIteration<? extends Statement, SailException> stIter
@@ -82,7 +82,7 @@ public class GraphResource extends ServerResource {
         }
     }
 
-    private Representation getRDFRepresentation(final URI graph,
+    private Representation getRDFRepresentation(final IRI graph,
                                                 final RDFFormat format) {
         try {
             Collection<Namespace> namespaces = new LinkedList<Namespace>();

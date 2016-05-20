@@ -1,34 +1,34 @@
 package net.fortytwo.sesametools.mappingsail;
 
-import org.openrdf.model.URI;
+import org.eclipse.rdf4j.model.IRI;
 
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * A set of rules for rewriting URIs based on direction (to or from the data store)
- * and part of speech (the position in an RDF statement in which a URI appears)
+ * A set of rules for rewriting IRIs based on direction (to or from the data store)
+ * and part of speech (the position in an RDF statement in which a IRI appears)
  *
  * @author Joshua Shinavier (http://fortytwo.net)
  */
 public class MappingSchema {
     /**
-     * The position in an RDF statement in which a URI appears
+     * The position in an RDF statement in which a IRI appears
      */
     public enum PartOfSpeech {
         SUBJECT, PREDICATE, OBJECT, CONTEXT
     }
 
     /**
-     * The direction of a URI rewriting rule: inbound rules map externally visible URIs
-     * to the URIs found in the data store, while outbound rules do the opposite.
+     * The direction of a IRI rewriting rule: inbound rules map externally visible IRIs
+     * to the IRIs found in the data store, while outbound rules do the opposite.
      */
     public enum Direction {
         INBOUND, OUTBOUND
     }
 
     private final RewriteRule defaultRewriter = new RewriteRule() {
-        public URI rewrite(final URI original) {
+        public IRI rewrite(final IRI original) {
             return original;
         }
     };
@@ -38,8 +38,8 @@ public class MappingSchema {
 
     /**
      * @param partOfSpeech the position in an RDF statement (subject, predicate, object or context)
-     *                     in which the URI appears
-     * @param direction    whether this is a rule to map externally visible URIs to internal URIs (inbound)
+     *                     in which the IRI appears
+     * @param direction    whether this is a rule to map externally visible IRIs to internal IRIs (inbound)
      *                     or the reverse (outbound)
      * @return the matching rewriting rule.
      *         If no such rule has been explicitly defined, the default rule (the identity mapping) is returned.
@@ -53,9 +53,9 @@ public class MappingSchema {
     }
 
     /**
-     * Defines an inbound or outbound URI rewriter.
+     * Defines an inbound or outbound IRI rewriter.
      *
-     * @param direction whether this is a rule to map externally visible URIs to internal URIs (inbound)
+     * @param direction whether this is a rule to map externally visible IRIs to internal IRIs (inbound)
      *                  or the reverse (outbound)
      * @param rule      the rewriting rule
      */
@@ -67,11 +67,11 @@ public class MappingSchema {
     }
 
     /**
-     * Defines an inbound or outbound URI rewriter for a specific part of speech
+     * Defines an inbound or outbound IRI rewriter for a specific part of speech
      * (subject, predicate, object, or context).
      *
      * @param partOfSpeech the part of speech to which this rewriter applies
-     * @param direction    whether this is a rule to map externally visible URIs to internal URIs (inbound)
+     * @param direction    whether this is a rule to map externally visible IRIs to internal IRIs (inbound)
      *                     or the reverse (outbound)
      * @param rule         the rewriting rule
      */

@@ -1,26 +1,27 @@
 
 package net.fortytwo.sesametools.constrained;
 
-import info.aduna.iteration.CloseableIteration;
+import org.eclipse.rdf4j.common.iteration.CloseableIteration;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.Statement;
+import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
+import org.eclipse.rdf4j.model.vocabulary.RDF;
+import org.eclipse.rdf4j.query.impl.DatasetImpl;
+import org.eclipse.rdf4j.sail.Sail;
+import org.eclipse.rdf4j.sail.SailConnection;
+import org.eclipse.rdf4j.sail.SailException;
+import org.eclipse.rdf4j.sail.memory.MemoryStore;
+
 import junit.framework.TestCase;
-import org.openrdf.model.Statement;
-import org.openrdf.model.URI;
-import org.openrdf.model.impl.URIImpl;
-import org.openrdf.model.vocabulary.RDF;
-import org.openrdf.query.impl.DatasetImpl;
-import org.openrdf.sail.Sail;
-import org.openrdf.sail.SailConnection;
-import org.openrdf.sail.SailException;
-import org.openrdf.sail.memory.MemoryStore;
 
 /**
  * @author Joshua Shinavier (http://fortytwo.net)
  */
 public class ConstrainedSailTest extends TestCase {
-    private static final URI
-            CONTEXT1_RW = new URIImpl("http://example.org/context1"),
-            CONTEXT2_R = new URIImpl("http://example.org/context2"),
-            CONTEXT3_W = new URIImpl("http://example.org/context3");
+    private static final IRI
+            CONTEXT1_RW = SimpleValueFactory.getInstance().createIRI("http://example.org/context1"),
+            CONTEXT2_R = SimpleValueFactory.getInstance().createIRI("http://example.org/context2"),
+            CONTEXT3_W = SimpleValueFactory.getInstance().createIRI("http://example.org/context3");
 
     private Sail baseSail;
     private ConstrainedSail constrainedSail;

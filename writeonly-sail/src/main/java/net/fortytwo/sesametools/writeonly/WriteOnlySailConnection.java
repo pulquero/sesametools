@@ -1,32 +1,34 @@
 
 package net.fortytwo.sesametools.writeonly;
 
-import info.aduna.iteration.CloseableIteration;
+import org.eclipse.rdf4j.common.iteration.CloseableIteration;
 import net.fortytwo.sesametools.EmptyCloseableIteration;
-import org.openrdf.model.Namespace;
-import org.openrdf.model.Resource;
-import org.openrdf.model.Statement;
-import org.openrdf.model.URI;
-import org.openrdf.model.Value;
-import org.openrdf.model.ValueFactory;
-import org.openrdf.query.BindingSet;
-import org.openrdf.query.Dataset;
-import org.openrdf.query.QueryEvaluationException;
-import org.openrdf.query.algebra.TupleExpr;
-import org.openrdf.rio.RDFHandler;
-import org.openrdf.rio.RDFHandlerException;
-import org.openrdf.sail.SailException;
-import org.openrdf.sail.helpers.SailBase;
-import org.openrdf.sail.helpers.SailConnectionBase;
+import org.eclipse.rdf4j.model.Namespace;
+import org.eclipse.rdf4j.model.Resource;
+import org.eclipse.rdf4j.model.Statement;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.Value;
+import org.eclipse.rdf4j.model.ValueFactory;
+import org.eclipse.rdf4j.query.BindingSet;
+import org.eclipse.rdf4j.query.Dataset;
+import org.eclipse.rdf4j.query.QueryEvaluationException;
+import org.eclipse.rdf4j.query.algebra.TupleExpr;
+import org.eclipse.rdf4j.rio.RDFHandler;
+import org.eclipse.rdf4j.rio.RDFHandlerException;
+import org.eclipse.rdf4j.sail.SailException;
+import org.eclipse.rdf4j.sail.helpers.AbstractSail;
+import org.eclipse.rdf4j.sail.helpers.AbstractSailConnection;
+import org.eclipse.rdf4j.sail.helpers.AbstractSail;
+import org.eclipse.rdf4j.sail.helpers.AbstractSailConnection;
 
 /**
  * @author Joshua Shinavier (http://fortytwo.net).
  */
-public class WriteOnlySailConnection extends SailConnectionBase {
+public class WriteOnlySailConnection extends AbstractSailConnection {
     private RDFHandler handler;
     private ValueFactory valueFactory;
 
-    public WriteOnlySailConnection(final SailBase sail,
+    public WriteOnlySailConnection(final AbstractSail sail,
                                    final RDFHandler handler,
                                    final ValueFactory valueFactory) {
         super(sail);
@@ -35,7 +37,7 @@ public class WriteOnlySailConnection extends SailConnectionBase {
     }
 
     protected void addStatementInternal(
-            final Resource subj, final URI pred, final Value obj, final Resource... contexts) throws SailException {
+            final Resource subj, final IRI pred, final Value obj, final Resource... contexts) throws SailException {
 
         if (null == contexts || 0 == contexts.length) {
             Statement st = valueFactory.createStatement(subj, pred, obj);
@@ -91,7 +93,7 @@ public class WriteOnlySailConnection extends SailConnectionBase {
     }
 
     protected CloseableIteration<? extends Statement, SailException> getStatementsInternal(
-            Resource arg0, URI arg1, Value arg2, boolean arg3, Resource... arg4)
+            Resource arg0, IRI arg1, Value arg2, boolean arg3, Resource... arg4)
             throws SailException {
         return new EmptyCloseableIteration<Statement, SailException>();
     }
@@ -100,7 +102,7 @@ public class WriteOnlySailConnection extends SailConnectionBase {
         // Does nothing.
     }
 
-    protected void removeStatementsInternal(Resource arg0, URI arg1, Value arg2,
+    protected void removeStatementsInternal(Resource arg0, IRI arg1, Value arg2,
                                  Resource... arg3) throws SailException {
         // Does nothing.
     }

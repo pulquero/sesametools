@@ -1,13 +1,13 @@
 package net.fortytwo.sesametools.mappingsail;
 
-import org.openrdf.sail.Sail;
-import org.openrdf.sail.SailConnection;
-import org.openrdf.sail.SailException;
-import org.openrdf.sail.helpers.SailWrapper;
+import org.eclipse.rdf4j.sail.Sail;
+import org.eclipse.rdf4j.sail.SailConnection;
+import org.eclipse.rdf4j.sail.SailException;
+import org.eclipse.rdf4j.sail.helpers.SailWrapper;
 
 /**
- * A <code>Sail</code> which maps between the internal URI space of a lower-level data store,
- * and an externally visible URI space
+ * A <code>Sail</code> which maps between the internal IRI space of a lower-level data store,
+ * and an externally visible IRI space
  * (for example, published Linked Data).
  *
  * @author Joshua Shinavier (http://fortytwo.net)
@@ -17,7 +17,7 @@ public class MappingSail extends SailWrapper {
 
     /**
      * @param baseSail the internal data store
-     * @param schema a set of rules for URI rewriting
+     * @param schema a set of rules for IRI rewriting
      */
     public MappingSail(final Sail baseSail,
                        final MappingSchema schema) {

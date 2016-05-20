@@ -1,13 +1,14 @@
 package net.fortytwo.sesametools;
 
-import org.openrdf.OpenRDFUtil;
-import org.openrdf.model.Graph;
-import org.openrdf.model.Resource;
-import org.openrdf.model.Statement;
-import org.openrdf.model.URI;
-import org.openrdf.model.Value;
-import org.openrdf.model.ValueFactory;
-import org.openrdf.model.vocabulary.RDF;
+import org.eclipse.rdf4j.OpenRDFUtil;
+import org.eclipse.rdf4j.model.Graph;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.Resource;
+import org.eclipse.rdf4j.model.Statement;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.Value;
+import org.eclipse.rdf4j.model.ValueFactory;
+import org.eclipse.rdf4j.model.vocabulary.RDF;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -172,7 +173,7 @@ public class RdfListUtil {
      *                     (null) context.
      */
     public void addListAtNode(final Resource subject,
-                              final URI predicate, final List<Value> nextValues,
+                              final IRI predicate, final List<Value> nextValues,
                               final Graph graphToAddTo, final Resource... contexts) {
         OpenRDFUtil.verifyContextNotNull(contexts);
 
@@ -234,7 +235,7 @@ public class RdfListUtil {
      * @throws RuntimeException if the list structure was not complete, or it had cycles
      */
     public List<Value> getListAtNode(final Resource subject,
-                                     final URI predicate,
+                                     final IRI predicate,
                                      final Graph graphToSearch,
                                      final Resource... contexts) {
         OpenRDFUtil.verifyContextNotNull(contexts);
@@ -584,7 +585,7 @@ public class RdfListUtil {
      * collection is returned.
      */
     public Collection<List<Value>> getListsAtNode(
-            final Resource subject, final URI predicate,
+            final Resource subject, final IRI predicate,
             final Graph graphToSearch, final Resource... contexts) {
         OpenRDFUtil.verifyContextNotNull(contexts);
 

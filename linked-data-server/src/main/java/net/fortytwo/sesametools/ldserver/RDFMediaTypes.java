@@ -1,14 +1,15 @@
 package net.fortytwo.sesametools.ldserver;
 
-import org.openrdf.rio.RDFFormat;
-import org.restlet.data.MediaType;
-import org.restlet.representation.Variant;
-
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
+import org.eclipse.rdf4j.rio.RDFFormat;
+import org.eclipse.rdf4j.rio.RDFWriterRegistry;
+import org.restlet.data.MediaType;
+import org.restlet.representation.Variant;
 
 /**
  * @author Joshua Shinavier (http://fortytwo.net)
@@ -28,7 +29,7 @@ public class RDFMediaTypes {
         // add RDF/XML first, as the default format
         toAdd.add(RDFFormat.RDFXML);
         // now add the others
-        toAdd.addAll(RDFFormat.values());
+        toAdd.addAll(RDFWriterRegistry.getInstance().getKeys());
 
         for (RDFFormat f : toAdd) {
             MediaType mt = new MediaType(f.getDefaultMIMEType());

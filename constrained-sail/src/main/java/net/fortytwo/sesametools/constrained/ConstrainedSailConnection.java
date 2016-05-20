@@ -1,27 +1,27 @@
 
 package net.fortytwo.sesametools.constrained;
 
-import info.aduna.iteration.CloseableIteration;
+import org.eclipse.rdf4j.common.iteration.CloseableIteration;
 import net.fortytwo.sesametools.CompoundCloseableIteration;
 import net.fortytwo.sesametools.EmptyCloseableIteration;
 import net.fortytwo.sesametools.SailConnectionTripleSource;
-import org.openrdf.model.Namespace;
-import org.openrdf.model.Resource;
-import org.openrdf.model.Statement;
-import org.openrdf.model.URI;
-import org.openrdf.model.Value;
-import org.openrdf.model.ValueFactory;
-import org.openrdf.query.BindingSet;
-import org.openrdf.query.Dataset;
-import org.openrdf.query.QueryEvaluationException;
-import org.openrdf.query.algebra.TupleExpr;
-import org.openrdf.query.algebra.evaluation.TripleSource;
-import org.openrdf.query.algebra.evaluation.federation.FederatedServiceResolverImpl;
-import org.openrdf.query.algebra.evaluation.impl.EvaluationStrategyImpl;
-import org.openrdf.query.impl.DatasetImpl;
-import org.openrdf.sail.SailConnection;
-import org.openrdf.sail.SailException;
-import org.openrdf.sail.helpers.SailConnectionWrapper;
+import org.eclipse.rdf4j.model.Namespace;
+import org.eclipse.rdf4j.model.Resource;
+import org.eclipse.rdf4j.model.Statement;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.Value;
+import org.eclipse.rdf4j.model.ValueFactory;
+import org.eclipse.rdf4j.query.BindingSet;
+import org.eclipse.rdf4j.query.Dataset;
+import org.eclipse.rdf4j.query.QueryEvaluationException;
+import org.eclipse.rdf4j.query.algebra.TupleExpr;
+import org.eclipse.rdf4j.query.algebra.evaluation.TripleSource;
+import org.eclipse.rdf4j.query.algebra.evaluation.federation.FederatedServiceResolverImpl;
+import org.eclipse.rdf4j.query.algebra.evaluation.impl.EvaluationStrategyImpl;
+import org.eclipse.rdf4j.query.impl.DatasetImpl;
+import org.eclipse.rdf4j.sail.SailConnection;
+import org.eclipse.rdf4j.sail.SailException;
+import org.eclipse.rdf4j.sail.helpers.SailConnectionWrapper;
 
 import java.util.Collection;
 import java.util.LinkedList;
@@ -108,7 +108,7 @@ public class ConstrainedSailConnection extends SailConnectionWrapper {
      */
     @Override
     public void addStatement(final Resource subj,
-                             final URI pred,
+                             final IRI pred,
                              final Value obj,
                              final Resource... contexts) throws SailException {
         if (0 == contexts.length) {
@@ -185,13 +185,13 @@ public class ConstrainedSailConnection extends SailConnectionWrapper {
             DatasetImpl di = new DatasetImpl();
             d = di;
 
-            for (URI r : dataset.getDefaultGraphs()) {
+            for (IRI r : dataset.getDefaultGraphs()) {
                 if (this.readPermitted(r)) {
                     di.addDefaultGraph(r);
                 }
             }
 
-            for (URI r : dataset.getNamedGraphs()) {
+            for (IRI r : dataset.getNamedGraphs()) {
                 if (this.readPermitted(r)) {
                     di.addNamedGraph(r);
                 }
@@ -246,7 +246,7 @@ public class ConstrainedSailConnection extends SailConnectionWrapper {
     @Override
     public CloseableIteration<? extends Statement, SailException> getStatements(
             final Resource subj,
-            final URI pred,
+            final IRI pred,
             final Value obj,
             final boolean includeInferred,
             final Resource... contexts) throws SailException {
@@ -288,7 +288,7 @@ public class ConstrainedSailConnection extends SailConnectionWrapper {
      *                 matching statements will be removed from the designated writeable context.
      */
     @Override
-    public void removeStatements(final Resource subj, final URI pred, final Value obj,
+    public void removeStatements(final Resource subj, final IRI pred, final Value obj,
                                  final Resource... contexts) throws SailException {
         if (0 == contexts.length) {
             if (WILDCARD_REMOVE_FROM_ALL_CONTEXTS) {

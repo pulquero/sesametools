@@ -1,6 +1,7 @@
 package net.fortytwo.sesametools.sesamize;
 
-import org.openrdf.rio.RDFFormat;
+import org.eclipse.rdf4j.rio.RDFFormat;
+import org.eclipse.rdf4j.rio.Rio;
 
 import java.io.File;
 import java.util.HashMap;
@@ -95,7 +96,10 @@ class SesamizeArgs {
         } else {
             // otherwise try to find the format based on the file name extension,
             // using the specified default value as a fallback
-            f = RDFFormat.forFileName(file.getName(), defaultValue);
+            f = Rio.getParserFormatForFileName(file.getName());
+            if(null == f) {
+            	f = defaultValue;
+            }
         }
 
         return f;
@@ -104,10 +108,10 @@ class SesamizeArgs {
     private RDFFormat findRDFFormat(final String s) {
         RDFFormat f;
 
-        f = RDFFormat.forMIMEType(s);
+        f = Rio.getParserFormatForMIMEType(s);
 
         if (null == f) {
-            f = RDFFormat.forFileName("example." + s);
+            f = Rio.getParserFormatForFileName("example." + s);
         }
         
         if (null == f) {

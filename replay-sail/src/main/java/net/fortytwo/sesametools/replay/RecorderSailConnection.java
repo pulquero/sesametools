@@ -1,6 +1,23 @@
 package net.fortytwo.sesametools.replay;
 
-import info.aduna.iteration.CloseableIteration;
+import java.util.Random;
+
+import org.eclipse.rdf4j.common.iteration.CloseableIteration;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.Namespace;
+import org.eclipse.rdf4j.model.Resource;
+import org.eclipse.rdf4j.model.Statement;
+import org.eclipse.rdf4j.model.Value;
+import org.eclipse.rdf4j.query.BindingSet;
+import org.eclipse.rdf4j.query.Dataset;
+import org.eclipse.rdf4j.query.QueryEvaluationException;
+import org.eclipse.rdf4j.query.algebra.TupleExpr;
+import org.eclipse.rdf4j.sail.Sail;
+import org.eclipse.rdf4j.sail.SailConnection;
+import org.eclipse.rdf4j.sail.SailException;
+import org.eclipse.rdf4j.sail.helpers.AbstractSail;
+import org.eclipse.rdf4j.sail.helpers.AbstractSailConnection;
+
 import net.fortytwo.sesametools.replay.calls.AddStatementCall;
 import net.fortytwo.sesametools.replay.calls.BeginCall;
 import net.fortytwo.sesametools.replay.calls.ClearCall;
@@ -18,34 +35,18 @@ import net.fortytwo.sesametools.replay.calls.RemoveStatementsCall;
 import net.fortytwo.sesametools.replay.calls.RollbackCall;
 import net.fortytwo.sesametools.replay.calls.SetNamespaceCall;
 import net.fortytwo.sesametools.replay.calls.SizeCall;
-import org.openrdf.model.Namespace;
-import org.openrdf.model.Resource;
-import org.openrdf.model.Statement;
-import org.openrdf.model.URI;
-import org.openrdf.model.Value;
-import org.openrdf.query.BindingSet;
-import org.openrdf.query.Dataset;
-import org.openrdf.query.QueryEvaluationException;
-import org.openrdf.query.algebra.TupleExpr;
-import org.openrdf.sail.Sail;
-import org.openrdf.sail.SailConnection;
-import org.openrdf.sail.SailException;
-import org.openrdf.sail.helpers.SailBase;
-import org.openrdf.sail.helpers.SailConnectionBase;
-
-import java.util.Random;
 
 /**
  * @author Joshua Shinavier (http://fortytwo.net).
  */
-public class RecorderSailConnection extends SailConnectionBase {
+public class RecorderSailConnection extends AbstractSailConnection {
     private final String id = "" + new Random().nextInt(0xFFFF);
     private final Handler<SailConnectionCall, SailException> queryHandler;
     private final SailConnection baseSailConnection;
     private final ReplayConfiguration config;
     private int iterationCount = 0;
 
-    public RecorderSailConnection(final SailBase sail,
+    public RecorderSailConnection(final AbstractSail sail,
                                   final Sail baseSail,
                                   final ReplayConfiguration config,
                                   final Handler<SailConnectionCall, SailException> queryHandler) throws SailException {
@@ -61,7 +62,7 @@ public class RecorderSailConnection extends SailConnectionBase {
     // Note: adding statements does not change the configuration of cached
     // values.
     protected void addStatementInternal(final Resource subj,
-                             final URI pred,
+                             final IRI pred,
                              final Value obj,
                              final Resource... contexts) throws SailException {
         if (config.logWriteOperations) {
@@ -149,7 +150,7 @@ public class RecorderSailConnection extends SailConnectionBase {
     }
 
     protected CloseableIteration<? extends Statement, SailException> getStatementsInternal(
-            final Resource subj, final URI pred, final Value obj, final boolean includeInferred,
+            final Resource subj, final IRI pred, final Value obj, final boolean includeInferred,
             final Resource... contexts) throws SailException {
 
         if (config.logReadOperations) {
@@ -172,7 +173,7 @@ public class RecorderSailConnection extends SailConnectionBase {
     }
 
     protected void removeStatementsInternal(final Resource subj,
-                                 final URI pred,
+                                 final IRI pred,
                                  final Value obj,
                                  final Resource... contexts) throws SailException {
         if (config.logWriteOperations) {

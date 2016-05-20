@@ -1,13 +1,13 @@
 package net.fortytwo.sesametools;
 
-import org.openrdf.model.BNode;
-import org.openrdf.model.Literal;
-import org.openrdf.model.Resource;
-import org.openrdf.model.Statement;
-import org.openrdf.model.URI;
-import org.openrdf.model.Value;
-import org.openrdf.model.ValueFactory;
-import org.openrdf.model.vocabulary.XMLSchema;
+import org.eclipse.rdf4j.model.BNode;
+import org.eclipse.rdf4j.model.Literal;
+import org.eclipse.rdf4j.model.Resource;
+import org.eclipse.rdf4j.model.Statement;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.Value;
+import org.eclipse.rdf4j.model.ValueFactory;
+import org.eclipse.rdf4j.model.vocabulary.XMLSchema;
 
 import java.util.Random;
 import java.util.UUID;
@@ -26,7 +26,7 @@ public class RandomValueFactory {
     private static final String[] languages = {"en", "fr", "de"};
 
     private enum ValueType {
-        Uri, /*Bnode,*/ Literal
+        IRI, /*Bnode,*/ Literal
     }
 
     private enum LiteralKind {
@@ -50,7 +50,7 @@ public class RandomValueFactory {
 
     public Statement randomStatement(final Resource context) {
         Resource subj = randomResource();
-        URI pred = randomURI();
+        IRI pred = randomIRI();
         Value obj = randomValue();
         return valueFactory.createStatement(subj, pred, obj, context);
     }
@@ -68,8 +68,8 @@ public class RandomValueFactory {
         return randomValue(type);
     }
 
-    public URI randomURI() {
-        return valueFactory.createURI("urn:uuid:" + UUID.randomUUID().toString().replace("-", ""));
+    public IRI randomIRI() {
+        return valueFactory.createIRI("urn:uuid:" + UUID.randomUUID().toString().replace("-", ""));
     }
 
     public BNode randomBNode() {
@@ -121,8 +121,8 @@ public class RandomValueFactory {
     private Value randomValue(final ValueType type) {
         Value v = null;
         switch (type) {
-            case Uri:
-                v = randomURI();
+            case IRI:
+                v = randomIRI();
                 break;
             //case Bnode:
             //    v = randomBNode();

@@ -1,7 +1,7 @@
 package net.fortytwo.sesametools.ldserver.query;
 
 import net.fortytwo.sesametools.ldserver.LinkedDataServer;
-import org.openrdf.sail.Sail;
+import org.eclipse.rdf4j.sail.Sail;
 import org.restlet.Request;
 import org.restlet.Restlet;
 import org.restlet.resource.ResourceException;
@@ -26,17 +26,17 @@ public abstract class QueryResource extends Restlet {
 
     private static final String LIMIT_PARAM = "limit";
 
-    protected String selfURI;
+    protected String selfIRI;
 
     protected Sail sail;
     //private final String query;
 
     protected Map<String, String> getArguments(final Request request) throws ResourceException {
          Map<String, String> arguments;
-        selfURI = request.getResourceRef().toString();
+        selfIRI = request.getResourceRef().toString();
 
         /*
-        System.out.println("selfURI = " + selfURI);
+        System.out.println("selfIRI = " + selfIRI);
         System.out.println("baseRef = " + request.getResourceRef().getBaseRef());
         System.out.println("host domain = " + request.getResourceRef().getHostDomain());
         System.out.println("host identifier = " + request.getResourceRef().getHostIdentifier());
@@ -48,10 +48,10 @@ public abstract class QueryResource extends Restlet {
 
         //getVariants().add(new Variant(MediaType.APPLICATION_JSON));
 
-        int i = selfURI.lastIndexOf("?");
+        int i = selfIRI.lastIndexOf("?");
         arguments = new HashMap<String, String>();
         if (0 < i) {
-            String args = selfURI.substring(i + 1);
+            String args = selfIRI.substring(i + 1);
             if (0 < args.length()) {
                 try {
                     arguments = parseParams(args);

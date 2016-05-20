@@ -6,21 +6,21 @@ package net.fortytwo.sesametools;
 import java.util.Collection;
 import java.util.Collections;
 
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.Resource;
+import org.eclipse.rdf4j.model.Statement;
+import org.eclipse.rdf4j.model.ValueFactory;
+import org.eclipse.rdf4j.query.MalformedQueryException;
+import org.eclipse.rdf4j.query.UpdateExecutionException;
+import org.eclipse.rdf4j.repository.Repository;
+import org.eclipse.rdf4j.repository.RepositoryConnection;
+import org.eclipse.rdf4j.repository.RepositoryException;
+import org.eclipse.rdf4j.repository.sail.SailRepository;
+import org.eclipse.rdf4j.sail.memory.MemoryStore;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.openrdf.model.Resource;
-import org.openrdf.model.Statement;
-import org.openrdf.model.URI;
-import org.openrdf.model.ValueFactory;
-import org.openrdf.query.MalformedQueryException;
-import org.openrdf.query.UpdateExecutionException;
-import org.openrdf.repository.Repository;
-import org.openrdf.repository.RepositoryConnection;
-import org.openrdf.repository.RepositoryException;
-import org.openrdf.repository.sail.SailRepository;
-import org.openrdf.sail.memory.MemoryStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,21 +39,21 @@ public class URITranslatorTest
     private String testInputUriPrefix1;
     private String testOutputUriPrefix1;
     
-    private URI testInputSubjectUri1;
-    private URI testInputPredicateUri1;
-    private URI testInputObjectUri1;
+    private IRI testInputSubjectUri1;
+    private IRI testInputPredicateUri1;
+    private IRI testInputObjectUri1;
     
-    private Collection<URI> testSubjectMappingPredicatesEmpty;
-    private Collection<URI> testPredicateMappingPredicatesEmpty;
-    private Collection<URI> testObjectMappingPredicatesEmpty;
+    private Collection<IRI> testSubjectMappingPredicatesEmpty;
+    private Collection<IRI> testPredicateMappingPredicatesEmpty;
+    private Collection<IRI> testObjectMappingPredicatesEmpty;
     
     private boolean testDeleteTranslatedTriplesTrue;
     
     private Resource testContext1;
 
-    private URI testOutputSubjectUri1;
-    private URI testOutputPredicateUri1;
-    private URI testOutputObjectUri1;
+    private IRI testOutputSubjectUri1;
+    private IRI testOutputPredicateUri1;
+    private IRI testOutputObjectUri1;
     
     /**
      * @throws java.lang.Exception
@@ -73,26 +73,26 @@ public class URITranslatorTest
         testInputUriPrefix1 = "urn:temp:";
         testOutputUriPrefix1 = "http://test.example.org/after/translation/";
         
-        testInputSubjectUri1 = testValueFactory.createURI(
+        testInputSubjectUri1 = testValueFactory.createIRI(
                 "urn:temp:testInputSubjectUri1");
-        testOutputSubjectUri1 = testValueFactory.createURI(
+        testOutputSubjectUri1 = testValueFactory.createIRI(
                 "http://test.example.org/after/translation/testInputSubjectUri1");
         
-        testInputPredicateUri1 = testValueFactory.createURI(
+        testInputPredicateUri1 = testValueFactory.createIRI(
                 "urn:temp:testInputPredicateUri1");
-        testOutputPredicateUri1 = testValueFactory.createURI(
+        testOutputPredicateUri1 = testValueFactory.createIRI(
                 "http://test.example.org/after/translation/testInputPredicateUri1");
         
-        testInputObjectUri1 = testValueFactory.createURI(
+        testInputObjectUri1 = testValueFactory.createIRI(
                 "urn:temp:testInputObjectUri1");
-        testOutputObjectUri1 = testValueFactory.createURI(
+        testOutputObjectUri1 = testValueFactory.createIRI(
                 "http://test.example.org/after/translation/testInputObjectUri1");
         
         testSubjectMappingPredicatesEmpty = Collections.emptyList();
         testPredicateMappingPredicatesEmpty = Collections.emptyList();
         testObjectMappingPredicatesEmpty = Collections.emptyList();
         
-        testContext1 = testValueFactory.createURI("urn:test:context:1");
+        testContext1 = testValueFactory.createIRI("urn:test:context:1");
     }
     
     /**

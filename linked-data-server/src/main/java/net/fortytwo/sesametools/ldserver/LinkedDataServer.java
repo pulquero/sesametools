@@ -3,9 +3,9 @@ package net.fortytwo.sesametools.ldserver;
 import net.fortytwo.sesametools.mappingsail.MappingSail;
 import net.fortytwo.sesametools.mappingsail.MappingSchema;
 import net.fortytwo.sesametools.mappingsail.RewriteRule;
-import org.openrdf.model.URI;
-import org.openrdf.model.ValueFactory;
-import org.openrdf.sail.Sail;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.ValueFactory;
+import org.eclipse.rdf4j.sail.Sail;
 import org.restlet.Application;
 
 /**
@@ -16,32 +16,32 @@ import org.restlet.Application;
 public class LinkedDataServer extends Application {
 
     private final Sail sail;
-    private final URI datasetURI;
+    private final IRI datasetIRI;
 
     private static LinkedDataServer SINGLETON = null;
 
     /**
      * @param baseSail        the data store published by this server
-     * @param internalBaseURI the base URI of resources within the data store
-     * @param externalBaseURI the base URI of resources as they are to be seen in the Linked Data
+     * @param internalBaseIRI the base IRI of resources within the data store
+     * @param externalBaseIRI the base IRI of resources as they are to be seen in the Linked Data
      */
     public LinkedDataServer(final Sail baseSail,
-                            final String internalBaseURI,
-                            final String externalBaseURI) {
-        this(baseSail, internalBaseURI, externalBaseURI, null);
+                            final String internalBaseIRI,
+                            final String externalBaseIRI) {
+        this(baseSail, internalBaseIRI, externalBaseIRI, null);
     }
 
     /**
      * @param baseSail        the data store published by this server
-     * @param internalBaseURI the base URI of resources within the data store
-     * @param externalBaseURI the base URI of resources as they are to be seen in the Linked Data
-     * @param dataset         the URI of the data set to be published.
+     * @param internalBaseIRI the base IRI of resources within the data store
+     * @param externalBaseIRI the base IRI of resources as they are to be seen in the Linked Data
+     * @param dataset         the IRI of the data set to be published.
      *                        This allows resource descriptions to be associated
      *                        with metadata about the data set which contains them.
      */
     public LinkedDataServer(final Sail baseSail,
-                            final String internalBaseURI,
-                            final String externalBaseURI,
+                            final String internalBaseIRI,
+                            final String externalBaseIRI,
                             final String dataset) {
         if (null != SINGLETON) {
             throw new IllegalStateException("only one LinkedDataServer may be instantiated per JVM");
@@ -51,37 +51,37 @@ public class LinkedDataServer extends Application {
 
         final ValueFactory vf = baseSail.getValueFactory();
 
-        if (!internalBaseURI.equals(externalBaseURI)) {
+        if (!internalBaseIRI.equals(externalBaseIRI)) {
             RewriteRule outboundRewriter = new RewriteRule() {
-                public URI rewrite(final URI original) {
+                public IRI rewrite(final IRI original) {
                     //System.out.println("outbound: " + original);
 
                     if (null == original) {
                         return null;
                     } else {
                         String s = original.stringValue();
-                        //System.out.println("\t--> " + (s.startsWith(internalBaseURI)
-                        //        ? vf.createURI(s.replace(internalBaseURI, externalBaseURI))
+                        //System.out.println("\t--> " + (s.startsWith(internalBaseIRI)
+                        //        ? vf.createIRI(s.replace(internalBaseIRI, externalBaseIRI))
                         //        : original));
-                        return s.startsWith(internalBaseURI)
-                                ? vf.createURI(s.replace(internalBaseURI, externalBaseURI))
+                        return s.startsWith(internalBaseIRI)
+                                ? vf.createIRI(s.replace(internalBaseIRI, externalBaseIRI))
                                 : original;
                     }
                 }
             };
 
             RewriteRule inboundRewriter = new RewriteRule() {
-                public URI rewrite(final URI original) {
+                public IRI rewrite(final IRI original) {
                     //System.out.println("inbound: " + original);
                     if (null == original) {
                         return null;
                     } else {
                         String s = original.stringValue();
-                        //System.out.println("\t--> " + (s.startsWith(externalBaseURI)
-                        //        ? vf.createURI(s.replace(externalBaseURI, internalBaseURI))
+                        //System.out.println("\t--> " + (s.startsWith(externalBaseIRI)
+                        //        ? vf.createIRI(s.replace(externalBaseIRI, internalBaseIRI))
                         //        : original));
-                        return s.startsWith(externalBaseURI)
-                                ? vf.createURI(s.replace(externalBaseURI, internalBaseURI))
+                        return s.startsWith(externalBaseIRI)
+                                ? vf.createIRI(s.replace(externalBaseIRI, internalBaseIRI))
                                 : original;
                     }
                 }
@@ -92,14 +92,14 @@ public class LinkedDataServer extends Application {
             schema.setRewriter(MappingSchema.Direction.OUTBOUND, outboundRewriter);
             this.sail = new MappingSail(baseSail, schema);
 
-            datasetURI = null == dataset
+            datasetIRI = null == dataset
                     ? null
-                    : outboundRewriter.rewrite(vf.createURI(dataset));
+                    : outboundRewriter.rewrite(vf.createIRI(dataset));
         } else {
             this.sail = baseSail;
-            datasetURI = null == dataset
+            datasetIRI = null == dataset
                     ? null
-                    : vf.createURI(dataset);
+                    : vf.createIRI(dataset);
         }
     }
 
@@ -111,10 +111,10 @@ public class LinkedDataServer extends Application {
     }
 
     /**
-     * @return the internal URI for the data set published by this server
+     * @return the internal IRI for the data set published by this server
      */
-    public URI getDatasetURI() {
-        return datasetURI;
+    public IRI getDatasetIRI() {
+        return datasetIRI;
     }
 
     /**

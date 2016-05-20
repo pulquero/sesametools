@@ -1,6 +1,6 @@
 package net.fortytwo.sesametools.ldserver.query;
 
-import org.openrdf.sail.SailException;
+import org.eclipse.rdf4j.sail.SailException;
 import org.restlet.Request;
 import org.restlet.Response;
 import org.restlet.data.MediaType;

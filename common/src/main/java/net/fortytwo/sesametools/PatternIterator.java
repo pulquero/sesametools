@@ -1,10 +1,10 @@
 package net.fortytwo.sesametools;
 
-import org.openrdf.model.Resource;
-import org.openrdf.model.Statement;
-import org.openrdf.model.URI;
-import org.openrdf.model.Value;
-import org.openrdf.util.iterators.FilterIterator;
+import org.eclipse.rdf4j.model.Resource;
+import org.eclipse.rdf4j.model.Statement;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.Value;
+import org.eclipse.rdf4j.util.iterators.FilterIterator;
 
 import java.util.Iterator;
 
@@ -16,13 +16,13 @@ public class PatternIterator extends FilterIterator<Statement> {
 
     private Resource subj;
 
-    private URI pred;
+    private IRI pred;
 
     private Value obj;
 
     private Resource[] contexts;
 
-    public PatternIterator(Iterator<? extends Statement> iter, Resource subj, URI pred, Value obj,
+    public PatternIterator(Iterator<? extends Statement> iter, Resource subj, IRI pred, Value obj,
                            Resource... contexts) {
         super(iter);
         this.subj = subj;

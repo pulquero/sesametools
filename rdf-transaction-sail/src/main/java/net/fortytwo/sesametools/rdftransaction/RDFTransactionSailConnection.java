@@ -1,18 +1,18 @@
 package net.fortytwo.sesametools.rdftransaction;
 
-import org.openrdf.http.protocol.transaction.operations.AddStatementOperation;
-import org.openrdf.http.protocol.transaction.operations.ClearNamespacesOperation;
-import org.openrdf.http.protocol.transaction.operations.ClearOperation;
-import org.openrdf.http.protocol.transaction.operations.RemoveNamespaceOperation;
-import org.openrdf.http.protocol.transaction.operations.RemoveStatementsOperation;
-import org.openrdf.http.protocol.transaction.operations.SetNamespaceOperation;
-import org.openrdf.http.protocol.transaction.operations.TransactionOperation;
-import org.openrdf.model.Resource;
-import org.openrdf.model.URI;
-import org.openrdf.model.Value;
-import org.openrdf.sail.SailConnection;
-import org.openrdf.sail.SailException;
-import org.openrdf.sail.helpers.SailConnectionWrapper;
+import org.eclipse.rdf4j.http.protocol.transaction.operations.AddStatementOperation;
+import org.eclipse.rdf4j.http.protocol.transaction.operations.ClearNamespacesOperation;
+import org.eclipse.rdf4j.http.protocol.transaction.operations.ClearOperation;
+import org.eclipse.rdf4j.http.protocol.transaction.operations.RemoveNamespaceOperation;
+import org.eclipse.rdf4j.http.protocol.transaction.operations.RemoveStatementsOperation;
+import org.eclipse.rdf4j.http.protocol.transaction.operations.SetNamespaceOperation;
+import org.eclipse.rdf4j.http.protocol.transaction.operations.TransactionOperation;
+import org.eclipse.rdf4j.model.Resource;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.Value;
+import org.eclipse.rdf4j.sail.SailConnection;
+import org.eclipse.rdf4j.sail.SailException;
+import org.eclipse.rdf4j.sail.helpers.SailConnectionWrapper;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -75,7 +75,7 @@ public class RDFTransactionSailConnection extends SailConnectionWrapper {
     }
 
     @Override
-    public void addStatement(Resource subject, URI predicate, Value object, Resource... contexts)
+    public void addStatement(Resource subject, IRI predicate, Value object, Resource... contexts)
             throws SailException {
 
         this.getWrappedConnection().addStatement(subject, predicate, object, contexts);
@@ -84,7 +84,7 @@ public class RDFTransactionSailConnection extends SailConnectionWrapper {
     }
 
     @Override
-    public void removeStatements(Resource subject, URI predicate, Value object, Resource... contexts)
+    public void removeStatements(Resource subject, IRI predicate, Value object, Resource... contexts)
             throws SailException {
 
         this.getWrappedConnection().removeStatements(subject, predicate, object, contexts);

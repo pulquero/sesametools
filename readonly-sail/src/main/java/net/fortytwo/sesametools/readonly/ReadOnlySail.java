@@ -1,11 +1,11 @@
 package net.fortytwo.sesametools.readonly;
 
-import org.openrdf.model.ValueFactory;
-import org.openrdf.sail.Sail;
-import org.openrdf.sail.SailConnection;
-import org.openrdf.sail.SailException;
-import org.openrdf.sail.StackableSail;
-import org.openrdf.sail.helpers.SailBase;
+import org.eclipse.rdf4j.model.ValueFactory;
+import org.eclipse.rdf4j.sail.Sail;
+import org.eclipse.rdf4j.sail.SailConnection;
+import org.eclipse.rdf4j.sail.SailException;
+import org.eclipse.rdf4j.sail.StackableSail;
+import org.eclipse.rdf4j.sail.helpers.AbstractSail;
 
 import java.io.File;
 
@@ -16,7 +16,7 @@ import java.io.File;
  *
  * @author Joshua Shinavier (http://fortytwo.net).
  */
-public class ReadOnlySail extends SailBase implements StackableSail {
+public class ReadOnlySail extends AbstractSail implements StackableSail {
     private Sail baseSail;
 
     public ReadOnlySail(final Sail baseSail) {

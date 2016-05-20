@@ -3,14 +3,14 @@ package net.fortytwo.sesametools;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.openrdf.model.BNode;
-import org.openrdf.model.Literal;
-import org.openrdf.model.Resource;
-import org.openrdf.model.Statement;
-import org.openrdf.model.URI;
-import org.openrdf.model.ValueFactory;
-import org.openrdf.model.impl.ValueFactoryImpl;
-import org.openrdf.model.vocabulary.XMLSchema;
+import org.eclipse.rdf4j.model.BNode;
+import org.eclipse.rdf4j.model.Literal;
+import org.eclipse.rdf4j.model.Resource;
+import org.eclipse.rdf4j.model.Statement;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.ValueFactory;
+import org.eclipse.rdf4j.model.impl.ValueFactoryImpl;
+import org.eclipse.rdf4j.model.vocabulary.XMLSchema;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -31,7 +31,7 @@ public class StatementComparatorTest {
      * <p/>
      * However, sorting between unequal BNodes is not supported given the BNode
      * identifier definition, so BNodes are only used to verify consistent
-     * sorting of the same BNode and sorting between BNodes and URIs/Literals
+     * sorting of the same BNode and sorting between BNodes and IRIs/Literals
      */
     private ValueFactory valueFactory;
 
@@ -39,21 +39,21 @@ public class StatementComparatorTest {
     /**
      * testSubjectUri1 needs to be constructed to sort before testSubjectUri2
      */
-    private URI testSubjectUri1;
-    private URI testSubjectUri2;
+    private IRI testSubjectUri1;
+    private IRI testSubjectUri2;
 
     /**
      * testPredicateUri1 needs to be constructed to sort before testPredicateUri2
      */
-    private URI testPredicateUri1;
-    private URI testPredicateUri2;
+    private IRI testPredicateUri1;
+    private IRI testPredicateUri2;
 
     private BNode testObjectBNode1;
     /**
      * testObjectUri1 needs to be constructed to sort before testObjectUri2
      */
-    private URI testObjectUri1;
-    private URI testObjectUri2;
+    private IRI testObjectUri1;
+    private IRI testObjectUri2;
     /**
      * testObjectLiteral1 needs to be constructed to sort before testObjectLiteral2
      */
@@ -75,8 +75,8 @@ public class StatementComparatorTest {
     /**
      * testContextUri1 needs to be constructed to sort before testContextUri2
      */
-    private URI testContextUri1;
-    private URI testContextUri2;
+    private IRI testContextUri1;
+    private IRI testContextUri2;
 
     private Statement statement1;
     private Statement statement2;
@@ -101,15 +101,15 @@ public class StatementComparatorTest {
         valueFactory = new ValueFactoryImpl();
 
         testSubjectBNode1 = valueFactory.createBNode("SubjectBNode1");
-        testSubjectUri1 = valueFactory.createURI("urn:test:statementcomparator:", "subject1");
-        testSubjectUri2 = valueFactory.createURI("urn:test:statementcomparator:", "subject2");
+        testSubjectUri1 = valueFactory.createIRI("urn:test:statementcomparator:", "subject1");
+        testSubjectUri2 = valueFactory.createIRI("urn:test:statementcomparator:", "subject2");
 
-        testPredicateUri1 = valueFactory.createURI("urn:test:statementcomparator:", "predicate1");
-        testPredicateUri2 = valueFactory.createURI("urn:test:statementcomparator:", "predicate2");
+        testPredicateUri1 = valueFactory.createIRI("urn:test:statementcomparator:", "predicate1");
+        testPredicateUri2 = valueFactory.createIRI("urn:test:statementcomparator:", "predicate2");
 
         testObjectBNode1 = valueFactory.createBNode("ObjectBNode1");
-        testObjectUri1 = valueFactory.createURI("urn:test:statementcomparator:", "object1");
-        testObjectUri2 = valueFactory.createURI("urn:test:statementcomparator:", "object2");
+        testObjectUri1 = valueFactory.createIRI("urn:test:statementcomparator:", "object1");
+        testObjectUri2 = valueFactory.createIRI("urn:test:statementcomparator:", "object2");
         testObjectLiteral1 = valueFactory.createLiteral("test object literal 1");
         testObjectLiteral2 = valueFactory.createLiteral("test object literal 2");
         testObjectLangLiteral1EN = valueFactory.createLiteral("test object literal 1", "en");
@@ -123,8 +123,8 @@ public class StatementComparatorTest {
         testObjectTypedLiteral2Integer = valueFactory.createLiteral("2", XMLSchema.INTEGER);
 
         testContextBNode1 = valueFactory.createBNode("ContextBNode1");
-        testContextUri1 = valueFactory.createURI("urn:test:statementcomparator:", "context1");
-        testContextUri2 = valueFactory.createURI("urn:test:statementcomparator:", "context2");
+        testContextUri1 = valueFactory.createIRI("urn:test:statementcomparator:", "context1");
+        testContextUri2 = valueFactory.createIRI("urn:test:statementcomparator:", "context2");
     }
 
     /**
@@ -223,7 +223,7 @@ public class StatementComparatorTest {
      */
     @Test
     public void testCompareEquivalentBothNullContextsTyped3() {
-        statement1 = valueFactory.createStatement(testSubjectUri1, testPredicateUri1, testObjectUri1, (URI) null);
+        statement1 = valueFactory.createStatement(testSubjectUri1, testPredicateUri1, testObjectUri1, (IRI) null);
         statement2 = valueFactory.createStatement(testSubjectUri1, testPredicateUri1, testObjectUri1, (BNode) null);
 
         assertEquals(0, testComparator.compare(statement1, statement2));
@@ -236,7 +236,7 @@ public class StatementComparatorTest {
      */
     @Test
     public void testCompareEquivalentBothNullContextsTyped4() {
-        statement1 = valueFactory.createStatement(testSubjectUri1, testPredicateUri1, testObjectUri1, (URI) null);
+        statement1 = valueFactory.createStatement(testSubjectUri1, testPredicateUri1, testObjectUri1, (IRI) null);
         statement2 = valueFactory.createStatement(testSubjectUri1, testPredicateUri1, testObjectUri1, (Resource) null);
 
         assertEquals(0, testComparator.compare(statement1, statement2));
@@ -271,10 +271,10 @@ public class StatementComparatorTest {
 
     /**
      * Tests whether two equivalent statements (same subject/predicate/object)
-     * with one null context and one with a URI defined is sorted as BEFORE
+     * with one null context and one with a IRI defined is sorted as BEFORE
      */
     @Test
-    public void testCompareEquivalentOneNullOneURIContext() {
+    public void testCompareEquivalentOneNullOneIRIContext() {
         statement1 = valueFactory.createStatement(testSubjectUri1, testPredicateUri1, testObjectUri1, null);
         statement2 = valueFactory.createStatement(testSubjectUri1, testPredicateUri1, testObjectUri1, testContextUri1);
 
@@ -284,7 +284,7 @@ public class StatementComparatorTest {
 
     /**
      * Tests whether two equivalent statements (same subject/predicate/object)
-     * with one null context and one with a URI defined is sorted as BEFORE
+     * with one null context and one with a IRI defined is sorted as BEFORE
      */
     @Test
     public void testCompareEquivalentOneNullOneBNodeContext() {
@@ -299,7 +299,7 @@ public class StatementComparatorTest {
 
     /**
      * Tests whether two equivalent statements (same subject/predicate/object)
-     * with a BNode context and one with a URI defined is sorted as BEFORE
+     * with a BNode context and one with a IRI defined is sorted as BEFORE
      */
     @Test
     public void testCompareEquivalentBNodeAndUriContext() {
@@ -314,7 +314,7 @@ public class StatementComparatorTest {
 
     /**
      * Tests whether two equivalent statements (same subject/predicate/object)
-     * with two different URIs is sorted correctly
+     * with two different IRIs is sorted correctly
      */
     @Test
     public void testCompareEquivalentTwoUrisContext() {
@@ -327,7 +327,7 @@ public class StatementComparatorTest {
 
     /**
      * Tests whether two equivalent statements (same subject/predicate/object)
-     * with the same context URI are sorted as EQUALS
+     * with the same context IRI are sorted as EQUALS
      */
     @Test
     public void testCompareEquivalentSameUriContext() {
@@ -340,7 +340,7 @@ public class StatementComparatorTest {
 
     /**
      * Tests whether a Statement with a Blank Node subject is sorted BEFORE a
-     * similar statement with a URI subject
+     * similar statement with a IRI subject
      */
     @Test
     public void testCompareBNodeSubject() {
@@ -353,7 +353,7 @@ public class StatementComparatorTest {
 
     /**
      * Tests whether a statement with a BNode object is sorted before a
-     * statement with a URI object
+     * statement with a IRI object
      */
     @Test
     public void testCompareBNodeAndUriObjects() {
@@ -782,7 +782,7 @@ public class StatementComparatorTest {
 
     /**
      * Tests consistency of sorting between equivalent statements with
-     * different URI objects
+     * different IRI objects
      */
     @Test
     public void testCompareUriObjects() {
@@ -794,11 +794,11 @@ public class StatementComparatorTest {
     }
 
     /**
-     * Tests whether a statement with a URI object is sorted before a
+     * Tests whether a statement with a IRI object is sorted before a
      * statement with a Literal object
      */
     @Test
-    public void testCompareURIAndLiteralObjects() {
+    public void testCompareIRIAndLiteralObjects() {
         statement1 = valueFactory.createStatement(testSubjectBNode1, testPredicateUri1, testObjectUri1);
         statement2 = valueFactory.createStatement(testSubjectBNode1, testPredicateUri1, testObjectLiteral1);
 
@@ -807,7 +807,7 @@ public class StatementComparatorTest {
     }
 
     /**
-     * Tests whether a statement with a URI object is sorted before a
+     * Tests whether a statement with a IRI object is sorted before a
      * statement with a Literal object
      */
     @Test
@@ -821,7 +821,7 @@ public class StatementComparatorTest {
 
     /**
      * Tests consistency of sorting for two equivalent statements with
-     * different subject URIs
+     * different subject IRIs
      */
     @Test
     public void testCompareSubjects() {

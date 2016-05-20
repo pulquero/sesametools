@@ -1,35 +1,36 @@
 package net.fortytwo.sesametools.reposail;
 
-import info.aduna.iteration.CloseableIteration;
+import org.eclipse.rdf4j.common.iteration.CloseableIteration;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.Namespace;
+import org.eclipse.rdf4j.model.Resource;
+import org.eclipse.rdf4j.model.Statement;
+import org.eclipse.rdf4j.model.Value;
+import org.eclipse.rdf4j.model.ValueFactory;
+import org.eclipse.rdf4j.query.BindingSet;
+import org.eclipse.rdf4j.query.Dataset;
+import org.eclipse.rdf4j.query.QueryEvaluationException;
+import org.eclipse.rdf4j.query.algebra.TupleExpr;
+import org.eclipse.rdf4j.query.algebra.evaluation.TripleSource;
+import org.eclipse.rdf4j.query.algebra.evaluation.federation.FederatedServiceResolverImpl;
+import org.eclipse.rdf4j.query.algebra.evaluation.impl.EvaluationStrategyImpl;
+import org.eclipse.rdf4j.repository.RepositoryConnection;
+import org.eclipse.rdf4j.repository.RepositoryException;
+import org.eclipse.rdf4j.sail.SailException;
+import org.eclipse.rdf4j.sail.helpers.AbstractSail;
+import org.eclipse.rdf4j.sail.helpers.AbstractSailConnection;
+
 import net.fortytwo.sesametools.SailConnectionTripleSource;
-import org.openrdf.model.Namespace;
-import org.openrdf.model.Resource;
-import org.openrdf.model.Statement;
-import org.openrdf.model.URI;
-import org.openrdf.model.Value;
-import org.openrdf.model.ValueFactory;
-import org.openrdf.query.BindingSet;
-import org.openrdf.query.Dataset;
-import org.openrdf.query.QueryEvaluationException;
-import org.openrdf.query.algebra.TupleExpr;
-import org.openrdf.query.algebra.evaluation.TripleSource;
-import org.openrdf.query.algebra.evaluation.federation.FederatedServiceResolverImpl;
-import org.openrdf.query.algebra.evaluation.impl.EvaluationStrategyImpl;
-import org.openrdf.repository.RepositoryConnection;
-import org.openrdf.repository.RepositoryException;
-import org.openrdf.sail.SailException;
-import org.openrdf.sail.helpers.SailBase;
-import org.openrdf.sail.helpers.SailConnectionBase;
 
 /**
  * @author Joshua Shinavier (http://fortytwo.net).
  */
-public class RepositorySailConnection extends SailConnectionBase {
+public class RepositorySailConnection extends AbstractSailConnection {
     private RepositoryConnection repoConnection;
     private final boolean inferenceDisabled;
     private final ValueFactory valueFactory;
 
-    public RepositorySailConnection(final SailBase sail,
+    public RepositorySailConnection(final AbstractSail sail,
                                     final RepositoryConnection repoConnection,
                                     final boolean inferenceDisabled,
                                     final ValueFactory valueFactory) {
@@ -39,7 +40,7 @@ public class RepositorySailConnection extends SailConnectionBase {
         this.valueFactory = valueFactory;
     }
 
-    protected void addStatementInternal(Resource subj, URI pred, Value obj,
+    protected void addStatementInternal(Resource subj, IRI pred, Value obj,
                              Resource... contexts) throws SailException {
         try {
             repoConnection.add(subj, pred, obj, contexts);
@@ -121,7 +122,7 @@ public class RepositorySailConnection extends SailConnectionBase {
     }
 
     protected CloseableIteration<? extends Statement, SailException> getStatementsInternal(
-            Resource subj, URI pred, Value obj, boolean includeInferred, Resource... contexts)
+            Resource subj, IRI pred, Value obj, boolean includeInferred, Resource... contexts)
             throws SailException {
         try {
             return new RepositoryStatementIteration(
@@ -139,7 +140,7 @@ public class RepositorySailConnection extends SailConnectionBase {
         }
     }
 
-    protected void removeStatementsInternal(Resource subj, URI pred, Value obj,
+    protected void removeStatementsInternal(Resource subj, IRI pred, Value obj,
                                  Resource... contexts) throws SailException {
         try {
             repoConnection.remove(subj, pred, obj, contexts);

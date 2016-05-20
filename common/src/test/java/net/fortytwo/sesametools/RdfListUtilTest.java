@@ -1,24 +1,6 @@
 package net.fortytwo.sesametools;
 
-import junit.framework.Assert;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.openrdf.model.BNode;
-import org.openrdf.model.Graph;
-import org.openrdf.model.Literal;
-import org.openrdf.model.Resource;
-import org.openrdf.model.Statement;
-import org.openrdf.model.URI;
-import org.openrdf.model.Value;
-import org.openrdf.model.ValueFactory;
-import org.openrdf.model.impl.GraphImpl;
-import org.openrdf.model.vocabulary.RDF;
-import org.openrdf.repository.Repository;
-import org.openrdf.repository.RepositoryConnection;
-import org.openrdf.repository.sail.SailRepository;
-import org.openrdf.sail.memory.MemoryStore;
+import static junit.framework.Assert.assertEquals;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -29,7 +11,26 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import static junit.framework.Assert.assertEquals;
+import org.eclipse.rdf4j.model.BNode;
+import org.eclipse.rdf4j.model.Graph;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.Literal;
+import org.eclipse.rdf4j.model.Resource;
+import org.eclipse.rdf4j.model.Statement;
+import org.eclipse.rdf4j.model.Value;
+import org.eclipse.rdf4j.model.ValueFactory;
+import org.eclipse.rdf4j.model.impl.GraphImpl;
+import org.eclipse.rdf4j.model.vocabulary.RDF;
+import org.eclipse.rdf4j.repository.Repository;
+import org.eclipse.rdf4j.repository.RepositoryConnection;
+import org.eclipse.rdf4j.repository.sail.SailRepository;
+import org.eclipse.rdf4j.sail.memory.MemoryStore;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+
+import junit.framework.Assert;
 
 /**
  * @author Peter Ansell p_ansell@yahoo.com
@@ -44,19 +45,19 @@ public class RdfListUtilTest {
     private Graph testGraph;
     private ValueFactory vf;
 
-    private Resource testSubjectUri1;
-    private URI testPredicateUri1;
-    private URI testObjectUri1;
-    private URI testObjectUri2;
+    private Resource testSubjectIRI1;
+    private IRI testPredicateIRI1;
+    private IRI testObjectIRI1;
+    private IRI testObjectIRI2;
     private BNode testObjectBNode1;
     private Literal testObjectLiteral1;
 
     private List<Value> testValuesEmpty;
-    private List<Value> testValuesSingleUri;
+    private List<Value> testValuesSingleIRI;
     private List<Value> testValuesMultipleElements;
 
-    private URI testListHeadUri1;
-    private URI testListHeadUri2;
+    private IRI testListHeadIRI1;
+    private IRI testListHeadIRI2;
     private BNode testListHeadBNode1;
     private BNode testListHeadBNode2;
 
@@ -71,29 +72,29 @@ public class RdfListUtilTest {
         this.testGraph = new GraphImpl();
         this.vf = this.testGraph.getValueFactory();
 
-        this.testSubjectUri1 = this.vf.createURI("http://examples.net/testsubject/1");
-        this.testPredicateUri1 = this.vf.createURI("http://more.example.org/testpredicate/1");
+        this.testSubjectIRI1 = this.vf.createIRI("http://examples.net/testsubject/1");
+        this.testPredicateIRI1 = this.vf.createIRI("http://more.example.org/testpredicate/1");
 
-        this.testListHeadUri1 = this.vf.createURI("http://examples.net/testlisthead/1");
-        this.testListHeadUri2 = this.vf.createURI("http://examples.net/testlisthead/2");
+        this.testListHeadIRI1 = this.vf.createIRI("http://examples.net/testlisthead/1");
+        this.testListHeadIRI2 = this.vf.createIRI("http://examples.net/testlisthead/2");
         this.testListHeadBNode1 = this.vf.createBNode();
         this.testListHeadBNode2 = this.vf.createBNode();
 
-        this.testObjectUri1 = this.vf.createURI("http://example.org/testobject/1");
-        this.testObjectUri2 = this.vf.createURI("http://example.org/testobject/2");
+        this.testObjectIRI1 = this.vf.createIRI("http://example.org/testobject/1");
+        this.testObjectIRI2 = this.vf.createIRI("http://example.org/testobject/2");
         this.testObjectBNode1 = this.vf.createBNode();
         this.testObjectLiteral1 = this.vf.createLiteral("testobjectliteral1");
         this.testObjectLiteral2 = this.vf.createLiteral("testobjectliteral2");
 
         this.testValuesEmpty = Collections.emptyList();
 
-        this.testValuesSingleUri = new ArrayList<Value>(1);
-        this.testValuesSingleUri.add(this.testObjectUri1);
+        this.testValuesSingleIRI = new ArrayList<Value>(1);
+        this.testValuesSingleIRI.add(this.testObjectIRI1);
 
         this.testValuesMultipleElements = new ArrayList<Value>(3);
         this.testValuesMultipleElements.add(this.testObjectBNode1);
         this.testValuesMultipleElements.add(this.testObjectLiteral1);
-        this.testValuesMultipleElements.add(this.testObjectUri1);
+        this.testValuesMultipleElements.add(this.testObjectIRI1);
 
     }
 
@@ -106,56 +107,56 @@ public class RdfListUtilTest {
         this.testGraph = null;
         this.vf = null;
 
-        this.testSubjectUri1 = null;
-        this.testPredicateUri1 = null;
+        this.testSubjectIRI1 = null;
+        this.testPredicateIRI1 = null;
 
-        this.testListHeadUri1 = null;
-        this.testListHeadUri2 = null;
+        this.testListHeadIRI1 = null;
+        this.testListHeadIRI2 = null;
         this.testListHeadBNode1 = null;
         this.testListHeadBNode2 = null;
 
-        this.testObjectUri1 = null;
-        this.testObjectUri2 = null;
+        this.testObjectIRI1 = null;
+        this.testObjectIRI2 = null;
         this.testObjectBNode1 = null;
         this.testObjectLiteral1 = null;
         this.testObjectLiteral2 = null;
 
         this.testValuesEmpty = null;
-        this.testValuesSingleUri = null;
+        this.testValuesSingleIRI = null;
         this.testValuesMultipleElements = null;
 
     }
 
     /**
      * Test method for
-     * {@link net.fortytwo.sesametools.RdfListUtil#addListAtNode(org.openrdf.model.Resource, org.openrdf.model.URI,
+     * {@link net.fortytwo.sesametools.RdfListUtil#addListAtNode(org.openrdf.model.Resource, org.openrdf.model.IRI,
      * java.util.List, org.openrdf.model.Graph, org.openrdf.model.Resource[])}
      * .
      */
     @Test
     public void testAddListAtNodeEmptyNoContext() {
         this.testRdfListUtilDefaults.addListAtNode(
-                this.testSubjectUri1, this.testPredicateUri1, this.testValuesEmpty, this.testGraph);
+                this.testSubjectIRI1, this.testPredicateIRI1, this.testValuesEmpty, this.testGraph);
 
         assertEquals(0, this.testGraph.size());
     }
 
     /**
      * Test method for
-     * {@link net.fortytwo.sesametools.RdfListUtil#addListAtNode(org.openrdf.model.Resource, org.openrdf.model.URI,
+     * {@link net.fortytwo.sesametools.RdfListUtil#addListAtNode(org.openrdf.model.Resource, org.openrdf.model.IRI,
      * java.util.List, org.openrdf.model.Graph, org.openrdf.model.Resource[])}
      * .
      */
     @Test
     public void testAddListAtNodeMultipleElementsNoContext() {
         this.testRdfListUtilDefaults.addListAtNode(
-                this.testSubjectUri1, this.testPredicateUri1, this.testValuesMultipleElements,
+                this.testSubjectIRI1, this.testPredicateIRI1, this.testValuesMultipleElements,
                 this.testGraph);
 
         assertEquals(7, this.testGraph.size());
 
         // Match the head
-        final Iterator<Statement> headMatch = this.testGraph.match(this.testSubjectUri1, this.testPredicateUri1, null);
+        final Iterator<Statement> headMatch = this.testGraph.match(this.testSubjectIRI1, this.testPredicateIRI1, null);
 
         Assert.assertTrue(headMatch.hasNext());
 
@@ -227,7 +228,7 @@ public class RdfListUtilTest {
 
         Assert.assertTrue(restListMatchedStatement2.getObject() instanceof Resource);
 
-        // match the next first node, which should be a URI
+        // match the next first node, which should be a IRI
         final Iterator<Statement> matchFirst3 =
                 this.testGraph.match((BNode) restListMatchedStatement2.getObject(), RDF.FIRST, null);
 
@@ -239,11 +240,11 @@ public class RdfListUtilTest {
 
         Assert.assertFalse(matchFirst3.hasNext());
 
-        Assert.assertTrue(firstListMatchedStatement3.getObject() instanceof URI);
+        Assert.assertTrue(firstListMatchedStatement3.getObject() instanceof IRI);
 
-        assertEquals(this.testObjectUri1, firstListMatchedStatement3.getObject());
+        assertEquals(this.testObjectIRI1, firstListMatchedStatement3.getObject());
 
-        // match the rest link, which should be the URI rdf:nil
+        // match the rest link, which should be the IRI rdf:nil
         final Iterator<Statement> matchRest3 =
                 this.testGraph.match((BNode) restListMatchedStatement2.getObject(), RDF.REST, null);
 
@@ -255,7 +256,7 @@ public class RdfListUtilTest {
 
         Assert.assertFalse(matchRest3.hasNext());
 
-        Assert.assertTrue(restListMatchedStatement3.getObject() instanceof URI);
+        Assert.assertTrue(restListMatchedStatement3.getObject() instanceof IRI);
 
         assertEquals(RDF.NIL, restListMatchedStatement3.getObject());
 
@@ -263,19 +264,19 @@ public class RdfListUtilTest {
 
     /**
      * Test method for
-     * {@link net.fortytwo.sesametools.RdfListUtil#addListAtNode(org.openrdf.model.Resource, org.openrdf.model.URI,
+     * {@link net.fortytwo.sesametools.RdfListUtil#addListAtNode(org.openrdf.model.Resource, org.openrdf.model.IRI,
      * java.util.List, org.openrdf.model.Graph, org.openrdf.model.Resource[])}
      * .
      */
     @Test
     public void testAddListAtNodeSingleElementNoContext() {
         this.testRdfListUtilDefaults.addListAtNode(
-                this.testSubjectUri1, this.testPredicateUri1, this.testValuesSingleUri, this.testGraph);
+                this.testSubjectIRI1, this.testPredicateIRI1, this.testValuesSingleIRI, this.testGraph);
 
         assertEquals(3, this.testGraph.size());
 
         // Match the head
-        final Iterator<Statement> match = this.testGraph.match(this.testSubjectUri1, this.testPredicateUri1, null);
+        final Iterator<Statement> match = this.testGraph.match(this.testSubjectIRI1, this.testPredicateIRI1, null);
 
         Assert.assertTrue(match.hasNext());
 
@@ -299,9 +300,9 @@ public class RdfListUtilTest {
 
         Assert.assertFalse(matchFirstOthers.hasNext());
 
-        Assert.assertTrue(firstListMatchedStatement.getObject() instanceof URI);
+        Assert.assertTrue(firstListMatchedStatement.getObject() instanceof IRI);
 
-        assertEquals(this.testObjectUri1, firstListMatchedStatement.getObject());
+        assertEquals(this.testObjectIRI1, firstListMatchedStatement.getObject());
 
         // match the rest link, which should be rdf:nil for a single value list
         final Iterator<Statement> matchRestNil =
@@ -315,7 +316,7 @@ public class RdfListUtilTest {
 
         Assert.assertFalse(matchRestNil.hasNext());
 
-        Assert.assertTrue(restListMatchedStatement.getObject() instanceof URI);
+        Assert.assertTrue(restListMatchedStatement.getObject() instanceof IRI);
 
         assertEquals(RDF.NIL, restListMatchedStatement.getObject());
 
@@ -323,7 +324,7 @@ public class RdfListUtilTest {
 
     /**
      * Test method for
-     * {@link net.fortytwo.sesametools.RdfListUtil#addListAtNode(org.openrdf.model.Resource, org.openrdf.model.URI,
+     * {@link net.fortytwo.sesametools.RdfListUtil#addListAtNode(org.openrdf.model.Resource, org.openrdf.model.IRI,
      * java.util.List, org.openrdf.model.Graph, org.openrdf.model.Resource[])}
      * .
      */
@@ -336,7 +337,7 @@ public class RdfListUtilTest {
 
     /**
      * Test method for
-     * {@link net.fortytwo.sesametools.RdfListUtil#addListAtNode(org.openrdf.model.Resource, org.openrdf.model.URI,
+     * {@link net.fortytwo.sesametools.RdfListUtil#addListAtNode(org.openrdf.model.Resource, org.openrdf.model.IRI,
      * java.util.List, org.openrdf.model.Graph, org.openrdf.model.Resource[])}
      * .
      */
@@ -405,7 +406,7 @@ public class RdfListUtilTest {
 
         Assert.assertTrue(restListMatchedStatement2.getObject() instanceof Resource);
 
-        // match the next first node, which should be a URI
+        // match the next first node, which should be a IRI
         final Iterator<Statement> matchFirst3 =
                 this.testGraph.match((BNode) restListMatchedStatement2.getObject(), RDF.FIRST, null);
 
@@ -417,11 +418,11 @@ public class RdfListUtilTest {
 
         Assert.assertFalse(matchFirst3.hasNext());
 
-        Assert.assertTrue(firstListMatchedStatement3.getObject() instanceof URI);
+        Assert.assertTrue(firstListMatchedStatement3.getObject() instanceof IRI);
 
-        assertEquals(this.testObjectUri1, firstListMatchedStatement3.getObject());
+        assertEquals(this.testObjectIRI1, firstListMatchedStatement3.getObject());
 
-        // match the rest link, which should be the URI rdf:nil
+        // match the rest link, which should be the IRI rdf:nil
         final Iterator<Statement> matchRest3 =
                 this.testGraph.match((BNode) restListMatchedStatement2.getObject(), RDF.REST, null);
 
@@ -433,7 +434,7 @@ public class RdfListUtilTest {
 
         Assert.assertFalse(matchRest3.hasNext());
 
-        Assert.assertTrue(restListMatchedStatement3.getObject() instanceof URI);
+        Assert.assertTrue(restListMatchedStatement3.getObject() instanceof IRI);
 
         assertEquals(RDF.NIL, restListMatchedStatement3.getObject());
 
@@ -441,13 +442,13 @@ public class RdfListUtilTest {
 
     /**
      * Test method for
-     * {@link net.fortytwo.sesametools.RdfListUtil#addListAtNode(org.openrdf.model.Resource, org.openrdf.model.URI,
+     * {@link net.fortytwo.sesametools.RdfListUtil#addListAtNode(org.openrdf.model.Resource, org.openrdf.model.IRI,
      * java.util.List, org.openrdf.model.Graph, org.openrdf.model.Resource[])}
      * .
      */
     @Test
     public void testAddListBNodeHeadSingleElementNoContext() {
-        this.testRdfListUtilDefaults.addList(this.testListHeadBNode1, this.testValuesSingleUri, this.testGraph);
+        this.testRdfListUtilDefaults.addList(this.testListHeadBNode1, this.testValuesSingleIRI, this.testGraph);
 
         assertEquals(2, this.testGraph.size());
 
@@ -462,9 +463,9 @@ public class RdfListUtilTest {
 
         Assert.assertFalse(matchFirstOthers.hasNext());
 
-        Assert.assertTrue(firstListMatchedStatement.getObject() instanceof URI);
+        Assert.assertTrue(firstListMatchedStatement.getObject() instanceof IRI);
 
-        assertEquals(this.testObjectUri1, firstListMatchedStatement.getObject());
+        assertEquals(this.testObjectIRI1, firstListMatchedStatement.getObject());
 
         // match the rest link, which should be rdf:nil for a single value list
         final Iterator<Statement> matchRestNil = this.testGraph.match(this.testListHeadBNode1, RDF.REST, null);
@@ -477,7 +478,7 @@ public class RdfListUtilTest {
 
         Assert.assertFalse(matchRestNil.hasNext());
 
-        Assert.assertTrue(restListMatchedStatement.getObject() instanceof URI);
+        Assert.assertTrue(restListMatchedStatement.getObject() instanceof IRI);
 
         assertEquals(RDF.NIL, restListMatchedStatement.getObject());
 
@@ -485,31 +486,31 @@ public class RdfListUtilTest {
 
     /**
      * Test method for
-     * {@link net.fortytwo.sesametools.RdfListUtil#addListAtNode(org.openrdf.model.Resource, org.openrdf.model.URI,
+     * {@link net.fortytwo.sesametools.RdfListUtil#addListAtNode(org.openrdf.model.Resource, org.openrdf.model.IRI,
      * java.util.List, org.openrdf.model.Graph, org.openrdf.model.Resource[])}
      * .
      */
     @Test
-    public void testAddListUriHeadEmptyNoContext() {
-        this.testRdfListUtilDefaults.addList(this.testListHeadUri1, this.testValuesEmpty, this.testGraph);
+    public void testAddListIRIHeadEmptyNoContext() {
+        this.testRdfListUtilDefaults.addList(this.testListHeadIRI1, this.testValuesEmpty, this.testGraph);
 
         assertEquals(0, this.testGraph.size());
     }
 
     /**
      * Test method for
-     * {@link net.fortytwo.sesametools.RdfListUtil#addListAtNode(org.openrdf.model.Resource, org.openrdf.model.URI,
+     * {@link net.fortytwo.sesametools.RdfListUtil#addListAtNode(org.openrdf.model.Resource, org.openrdf.model.IRI,
      * java.util.List, org.openrdf.model.Graph, org.openrdf.model.Resource[])}
      * .
      */
     @Test
-    public void testAddListURIHeadMultipleElementsNoContext() {
-        this.testRdfListUtilDefaults.addList(this.testListHeadUri1, this.testValuesMultipleElements, this.testGraph);
+    public void testAddListIRIHeadMultipleElementsNoContext() {
+        this.testRdfListUtilDefaults.addList(this.testListHeadIRI1, this.testValuesMultipleElements, this.testGraph);
 
         assertEquals(6, this.testGraph.size());
 
         // match the first element, which should be a bnode
-        final Iterator<Statement> matchFirst1 = this.testGraph.match(this.testListHeadUri1, RDF.FIRST, null);
+        final Iterator<Statement> matchFirst1 = this.testGraph.match(this.testListHeadIRI1, RDF.FIRST, null);
 
         Assert.assertTrue(matchFirst1.hasNext());
 
@@ -525,7 +526,7 @@ public class RdfListUtilTest {
         assertEquals(this.testObjectBNode1, firstListMatchedStatement1.getObject());
 
         // match the rest link, which should be a BNode
-        final Iterator<Statement> matchRest1 = this.testGraph.match(this.testListHeadUri1, RDF.REST, null);
+        final Iterator<Statement> matchRest1 = this.testGraph.match(this.testListHeadIRI1, RDF.REST, null);
 
         Assert.assertTrue(matchRest1.hasNext());
 
@@ -567,7 +568,7 @@ public class RdfListUtilTest {
 
         Assert.assertTrue(restListMatchedStatement2.getObject() instanceof Resource);
 
-        // match the next first node, which should be a URI
+        // match the next first node, which should be a IRI
         final Iterator<Statement> matchFirst3 =
                 this.testGraph.match((BNode) restListMatchedStatement2.getObject(), RDF.FIRST, null);
 
@@ -579,11 +580,11 @@ public class RdfListUtilTest {
 
         Assert.assertFalse(matchFirst3.hasNext());
 
-        Assert.assertTrue(firstListMatchedStatement3.getObject() instanceof URI);
+        Assert.assertTrue(firstListMatchedStatement3.getObject() instanceof IRI);
 
-        assertEquals(this.testObjectUri1, firstListMatchedStatement3.getObject());
+        assertEquals(this.testObjectIRI1, firstListMatchedStatement3.getObject());
 
-        // match the rest link, which should be the URI rdf:nil
+        // match the rest link, which should be the IRI rdf:nil
         final Iterator<Statement> matchRest3 =
                 this.testGraph.match((BNode) restListMatchedStatement2.getObject(), RDF.REST, null);
 
@@ -595,7 +596,7 @@ public class RdfListUtilTest {
 
         Assert.assertFalse(matchRest3.hasNext());
 
-        Assert.assertTrue(restListMatchedStatement3.getObject() instanceof URI);
+        Assert.assertTrue(restListMatchedStatement3.getObject() instanceof IRI);
 
         assertEquals(RDF.NIL, restListMatchedStatement3.getObject());
 
@@ -603,18 +604,18 @@ public class RdfListUtilTest {
 
     /**
      * Test method for
-     * {@link net.fortytwo.sesametools.RdfListUtil#addListAtNode(org.openrdf.model.Resource, org.openrdf.model.URI,
+     * {@link net.fortytwo.sesametools.RdfListUtil#addListAtNode(org.openrdf.model.Resource, org.openrdf.model.IRI,
      * java.util.List, org.openrdf.model.Graph, org.openrdf.model.Resource[])}
      * .
      */
     @Test
-    public void testAddListURIHeadSingleElementNoContext() {
-        this.testRdfListUtilDefaults.addList(this.testListHeadUri1, this.testValuesSingleUri, this.testGraph);
+    public void testAddListIRIHeadSingleElementNoContext() {
+        this.testRdfListUtilDefaults.addList(this.testListHeadIRI1, this.testValuesSingleIRI, this.testGraph);
 
         assertEquals(2, this.testGraph.size());
 
         // match the first element
-        final Iterator<Statement> matchFirstOthers = this.testGraph.match(this.testListHeadUri1, RDF.FIRST, null);
+        final Iterator<Statement> matchFirstOthers = this.testGraph.match(this.testListHeadIRI1, RDF.FIRST, null);
 
         Assert.assertTrue(matchFirstOthers.hasNext());
 
@@ -624,12 +625,12 @@ public class RdfListUtilTest {
 
         Assert.assertFalse(matchFirstOthers.hasNext());
 
-        Assert.assertTrue(firstListMatchedStatement.getObject() instanceof URI);
+        Assert.assertTrue(firstListMatchedStatement.getObject() instanceof IRI);
 
-        assertEquals(this.testObjectUri1, firstListMatchedStatement.getObject());
+        assertEquals(this.testObjectIRI1, firstListMatchedStatement.getObject());
 
         // match the rest link, which should be rdf:nil for a single value list
-        final Iterator<Statement> matchRestNil = this.testGraph.match(this.testListHeadUri1, RDF.REST, null);
+        final Iterator<Statement> matchRestNil = this.testGraph.match(this.testListHeadIRI1, RDF.REST, null);
 
         Assert.assertTrue(matchRestNil.hasNext());
 
@@ -639,7 +640,7 @@ public class RdfListUtilTest {
 
         Assert.assertFalse(matchRestNil.hasNext());
 
-        Assert.assertTrue(restListMatchedStatement.getObject() instanceof URI);
+        Assert.assertTrue(restListMatchedStatement.getObject() instanceof IRI);
 
         assertEquals(RDF.NIL, restListMatchedStatement.getObject());
 
@@ -647,20 +648,20 @@ public class RdfListUtilTest {
 
     /**
      * Test method for
-     * {@link net.fortytwo.sesametools.RdfListUtil#getListAtNode(org.openrdf.model.Resource, org.openrdf.model.URI,
+     * {@link net.fortytwo.sesametools.RdfListUtil#getListAtNode(org.openrdf.model.Resource, org.openrdf.model.IRI,
      * org.openrdf.model.Graph, org.openrdf.model.Resource)}
      * .
      */
     @Test
     public void testGetListAfterAddListAtNodeMultipleElementsNullContext() {
         this.testRdfListUtilDefaults.addListAtNode(
-                this.testSubjectUri1, this.testPredicateUri1, this.testValuesMultipleElements, this.testGraph);
+                this.testSubjectIRI1, this.testPredicateIRI1, this.testValuesMultipleElements, this.testGraph);
 
         assertEquals(7, this.testGraph.size());
 
         // verify that the head statement was inserted and find the first pointer to use with
         // getList
-        final Iterator<Statement> match = this.testGraph.match(this.testSubjectUri1, this.testPredicateUri1, null);
+        final Iterator<Statement> match = this.testGraph.match(this.testSubjectIRI1, this.testPredicateIRI1, null);
 
         Assert.assertTrue(match.hasNext());
 
@@ -680,20 +681,20 @@ public class RdfListUtilTest {
 
         Assert.assertTrue(results.contains(this.testObjectBNode1));
         Assert.assertTrue(results.contains(this.testObjectLiteral1));
-        Assert.assertTrue(results.contains(this.testObjectUri1));
+        Assert.assertTrue(results.contains(this.testObjectIRI1));
 
     }
 
     /**
      * Test method for
-     * {@link net.fortytwo.sesametools.RdfListUtil#getListAtNode(org.openrdf.model.Resource, org.openrdf.model.URI,
+     * {@link net.fortytwo.sesametools.RdfListUtil#getListAtNode(org.openrdf.model.Resource, org.openrdf.model.IRI,
      * org.openrdf.model.Graph, org.openrdf.model.Resource)}
      * .
      */
     @Test
     public void testGetListAtNodeAfterInvalidGraphOperation() {
         this.testRdfListUtilDefaults.addListAtNode(
-                this.testSubjectUri1, this.testPredicateUri1, this.testValuesMultipleElements, this.testGraph);
+                this.testSubjectIRI1, this.testPredicateIRI1, this.testValuesMultipleElements, this.testGraph);
 
         assertEquals(7, this.testGraph.size());
 
@@ -713,7 +714,7 @@ public class RdfListUtilTest {
         try {
             final List<Value> results =
                     this.testRdfListUtilDefaults.getListAtNode(
-                            this.testSubjectUri1, this.testPredicateUri1, this.testGraph, (Resource) null);
+                            this.testSubjectIRI1, this.testPredicateIRI1, this.testGraph, (Resource) null);
 
             assertEquals("Returned results from an invalid list structure", 0, results.size());
             Assert.fail("Did not find expected exception");
@@ -724,32 +725,32 @@ public class RdfListUtilTest {
 
     /**
      * Test method for
-     * {@link net.fortytwo.sesametools.RdfListUtil#getListAtNode(org.openrdf.model.Resource, org.openrdf.model.URI,
+     * {@link net.fortytwo.sesametools.RdfListUtil#getListAtNode(org.openrdf.model.Resource, org.openrdf.model.IRI,
      * org.openrdf.model.Graph, org.openrdf.model.Resource)}
      * .
      */
     @Test
     public void testGetListAtNodeMultipleElementsNullContext() {
         this.testRdfListUtilDefaults.addListAtNode(
-                this.testSubjectUri1, this.testPredicateUri1, this.testValuesMultipleElements, this.testGraph);
+                this.testSubjectIRI1, this.testPredicateIRI1, this.testValuesMultipleElements, this.testGraph);
 
         assertEquals(7, this.testGraph.size());
 
         final List<Value> results =
                 this.testRdfListUtilDefaults.getListAtNode(
-                        this.testSubjectUri1, this.testPredicateUri1, this.testGraph, (Resource) null);
+                        this.testSubjectIRI1, this.testPredicateIRI1, this.testGraph, (Resource) null);
 
         assertEquals(3, results.size());
 
         Assert.assertTrue(results.contains(this.testObjectBNode1));
         Assert.assertTrue(results.contains(this.testObjectLiteral1));
-        Assert.assertTrue(results.contains(this.testObjectUri1));
+        Assert.assertTrue(results.contains(this.testObjectIRI1));
 
     }
 
     /**
      * Test method for
-     * {@link net.fortytwo.sesametools.RdfListUtil#getListAtNode(org.openrdf.model.Resource, org.openrdf.model.URI,
+     * {@link net.fortytwo.sesametools.RdfListUtil#getListAtNode(org.openrdf.model.Resource, org.openrdf.model.IRI,
      * org.openrdf.model.Graph, org.openrdf.model.Resource)}
      * .
      */
@@ -785,7 +786,7 @@ public class RdfListUtilTest {
 
     /**
      * Test method for
-     * {@link net.fortytwo.sesametools.RdfListUtil#getListAtNode(org.openrdf.model.Resource, org.openrdf.model.URI,
+     * {@link net.fortytwo.sesametools.RdfListUtil#getListAtNode(org.openrdf.model.Resource, org.openrdf.model.IRI,
      * org.openrdf.model.Graph, org.openrdf.model.Resource)}
      * .
      */
@@ -826,7 +827,7 @@ public class RdfListUtilTest {
 
     /**
      * Test method for
-     * {@link net.fortytwo.sesametools.RdfListUtil#getListAtNode(org.openrdf.model.Resource, org.openrdf.model.URI,
+     * {@link net.fortytwo.sesametools.RdfListUtil#getListAtNode(org.openrdf.model.Resource, org.openrdf.model.IRI,
      * org.openrdf.model.Graph, org.openrdf.model.Resource)}
      * .
      */
@@ -843,19 +844,19 @@ public class RdfListUtilTest {
 
         Assert.assertTrue(results.contains(this.testObjectBNode1));
         Assert.assertTrue(results.contains(this.testObjectLiteral1));
-        Assert.assertTrue(results.contains(this.testObjectUri1));
+        Assert.assertTrue(results.contains(this.testObjectIRI1));
 
     }
 
     @Test
     public void testGetListsAtNodeSingleNullContext() {
         this.testRdfListUtilDefaults.addListAtNode(
-                this.testSubjectUri1, this.testPredicateUri1, this.testValuesSingleUri, this.testGraph);
+                this.testSubjectIRI1, this.testPredicateIRI1, this.testValuesSingleIRI, this.testGraph);
 
         assertEquals(3, this.testGraph.size());
 
         // verify that the head statement was inserted
-        final Iterator<Statement> match = this.testGraph.match(this.testSubjectUri1, this.testPredicateUri1, null);
+        final Iterator<Statement> match = this.testGraph.match(this.testSubjectIRI1, this.testPredicateIRI1, null);
 
         Assert.assertTrue(match.hasNext());
 
@@ -869,7 +870,7 @@ public class RdfListUtilTest {
 
         final Collection<List<Value>> lists =
                 this.testRdfListUtilDefaults
-                        .getListsAtNode(this.testSubjectUri1, this.testPredicateUri1, this.testGraph, (Resource) null);
+                        .getListsAtNode(this.testSubjectIRI1, this.testPredicateIRI1, this.testGraph, (Resource) null);
 
         assertEquals(1, lists.size());
 
@@ -885,12 +886,12 @@ public class RdfListUtilTest {
     @Test
     public void testGetListsAfterAddListAtNodeSingleNullContext() {
         this.testRdfListUtilDefaults.addListAtNode(
-                this.testSubjectUri1, this.testPredicateUri1, this.testValuesSingleUri, this.testGraph);
+                this.testSubjectIRI1, this.testPredicateIRI1, this.testValuesSingleIRI, this.testGraph);
 
         assertEquals(3, this.testGraph.size());
 
         // verify that the head statement was inserted
-        final Iterator<Statement> match = this.testGraph.match(this.testSubjectUri1, this.testPredicateUri1, null);
+        final Iterator<Statement> match = this.testGraph.match(this.testSubjectIRI1, this.testPredicateIRI1, null);
 
         Assert.assertTrue(match.hasNext());
 
@@ -922,7 +923,7 @@ public class RdfListUtilTest {
 
     @Test
     public void testGetListsAfterAddListBNodeHeadSingleNullContext() {
-        this.testRdfListUtilDefaults.addList(this.testListHeadBNode1, this.testValuesSingleUri,
+        this.testRdfListUtilDefaults.addList(this.testListHeadBNode1, this.testValuesSingleIRI,
                 this.testGraph);
 
         assertEquals(2, this.testGraph.size());
@@ -959,12 +960,12 @@ public class RdfListUtilTest {
     @Test
     public void testGetListsSingleNullContext() {
         this.testRdfListUtilDefaults.addListAtNode(
-                this.testSubjectUri1, this.testPredicateUri1, this.testValuesSingleUri, this.testGraph);
+                this.testSubjectIRI1, this.testPredicateIRI1, this.testValuesSingleIRI, this.testGraph);
 
         assertEquals(3, this.testGraph.size());
 
         // Find the head node that was generated by this method
-        final Iterator<Statement> match = this.testGraph.match(this.testSubjectUri1, this.testPredicateUri1, null);
+        final Iterator<Statement> match = this.testGraph.match(this.testSubjectIRI1, this.testPredicateIRI1, null);
 
         Assert.assertTrue(match.hasNext());
 
@@ -997,13 +998,13 @@ public class RdfListUtilTest {
 
     /**
      * Test method for
-     * {@link net.fortytwo.sesametools.RdfListUtil#getListAtNode(org.openrdf.model.Resource, org.openrdf.model.URI,
+     * {@link net.fortytwo.sesametools.RdfListUtil#getListAtNode(org.openrdf.model.Resource, org.openrdf.model.IRI,
      * org.openrdf.model.Graph, org.openrdf.model.Resource)}
      * .
      */
     @Test
-    public void testGetListURIHeadAfterInvalidGraphOperation() {
-        this.testRdfListUtilDefaults.addList(this.testListHeadUri1, this.testValuesMultipleElements, this.testGraph);
+    public void testGetListIRIHeadAfterInvalidGraphOperation() {
+        this.testRdfListUtilDefaults.addList(this.testListHeadIRI1, this.testValuesMultipleElements, this.testGraph);
 
         assertEquals(6, this.testGraph.size());
 
@@ -1022,7 +1023,7 @@ public class RdfListUtilTest {
 
         try {
             final List<Value> results = this.testRdfListUtilDefaults.getList(
-                    this.testListHeadUri1, this.testGraph, (Resource) null);
+                    this.testListHeadIRI1, this.testGraph, (Resource) null);
 
             assertEquals("Returned results from an invalid list structure", 0, results.size());
             Assert.fail("Did not find expected exception");
@@ -1036,16 +1037,16 @@ public class RdfListUtilTest {
         Statement testStatement1 = vf.createStatement(testListHeadBNode1, RDF.FIRST, testObjectLiteral1);
         this.testGraph.add(testStatement1);
 
-        Statement testStatement2 = vf.createStatement(testListHeadBNode1, RDF.REST, testListHeadUri1);
+        Statement testStatement2 = vf.createStatement(testListHeadBNode1, RDF.REST, testListHeadIRI1);
         this.testGraph.add(testStatement2);
 
-        Statement testStatement3 = vf.createStatement(testListHeadUri1, RDF.FIRST, testObjectUri1);
+        Statement testStatement3 = vf.createStatement(testListHeadIRI1, RDF.FIRST, testObjectIRI1);
         this.testGraph.add(testStatement3);
 
-        Statement testStatement4 = vf.createStatement(testListHeadUri1, RDF.REST, testListHeadBNode2);
+        Statement testStatement4 = vf.createStatement(testListHeadIRI1, RDF.REST, testListHeadBNode2);
         this.testGraph.add(testStatement4);
 
-        Statement testStatement5 = vf.createStatement(testListHeadUri1, RDF.REST, testListHeadUri2);
+        Statement testStatement5 = vf.createStatement(testListHeadIRI1, RDF.REST, testListHeadIRI2);
         this.testGraph.add(testStatement5);
 
         Statement testStatement6 = vf.createStatement(testListHeadBNode2, RDF.FIRST, testObjectBNode1);
@@ -1054,10 +1055,10 @@ public class RdfListUtilTest {
         Statement testStatement7 = vf.createStatement(testListHeadBNode2, RDF.REST, RDF.NIL);
         this.testGraph.add(testStatement7);
 
-        Statement testStatement8 = vf.createStatement(testListHeadUri2, RDF.FIRST, testObjectUri2);
+        Statement testStatement8 = vf.createStatement(testListHeadIRI2, RDF.FIRST, testObjectIRI2);
         this.testGraph.add(testStatement8);
 
-        Statement testStatement9 = vf.createStatement(testListHeadUri2, RDF.REST, RDF.NIL);
+        Statement testStatement9 = vf.createStatement(testListHeadIRI2, RDF.REST, RDF.NIL);
         this.testGraph.add(testStatement9);
 
         Set<Resource> heads = new HashSet<Resource>(1);
@@ -1076,11 +1077,11 @@ public class RdfListUtilTest {
 
             Assert.assertTrue(resultList.contains(testObjectLiteral1));
 
-            Assert.assertTrue(resultList.contains(testObjectUri1));
+            Assert.assertTrue(resultList.contains(testObjectIRI1));
 
             if (resultList.contains(testObjectBNode1)) {
                 foundFirstList = true;
-            } else if (resultList.contains(testObjectUri2)) {
+            } else if (resultList.contains(testObjectIRI2)) {
                 foundSecondList = true;
             }
         }
@@ -1701,16 +1702,16 @@ public class RdfListUtilTest {
         Statement testStatement1 = vf.createStatement(testListHeadBNode1, RDF.FIRST, testObjectLiteral1);
         this.testGraph.add(testStatement1);
 
-        Statement testStatement2 = vf.createStatement(testListHeadBNode1, RDF.REST, testListHeadUri1);
+        Statement testStatement2 = vf.createStatement(testListHeadBNode1, RDF.REST, testListHeadIRI1);
         this.testGraph.add(testStatement2);
 
-        Statement testStatement3 = vf.createStatement(testListHeadUri1, RDF.FIRST, testObjectUri1);
+        Statement testStatement3 = vf.createStatement(testListHeadIRI1, RDF.FIRST, testObjectIRI1);
         this.testGraph.add(testStatement3);
 
-        Statement testStatement4 = vf.createStatement(testListHeadUri1, RDF.REST, testListHeadBNode2);
+        Statement testStatement4 = vf.createStatement(testListHeadIRI1, RDF.REST, testListHeadBNode2);
         this.testGraph.add(testStatement4);
 
-        Statement testStatement5 = vf.createStatement(testListHeadUri1, RDF.REST, testListHeadUri2);
+        Statement testStatement5 = vf.createStatement(testListHeadIRI1, RDF.REST, testListHeadIRI2);
         this.testGraph.add(testStatement5);
 
         Statement testStatement6 = vf.createStatement(testListHeadBNode2, RDF.FIRST, testObjectBNode1);
@@ -1719,10 +1720,10 @@ public class RdfListUtilTest {
         Statement testStatement7 = vf.createStatement(testListHeadBNode2, RDF.REST, RDF.NIL);
         this.testGraph.add(testStatement7);
 
-        Statement testStatement8 = vf.createStatement(testListHeadUri2, RDF.FIRST, testObjectUri2);
+        Statement testStatement8 = vf.createStatement(testListHeadIRI2, RDF.FIRST, testObjectIRI2);
         this.testGraph.add(testStatement8);
 
-        Statement testStatement9 = vf.createStatement(testListHeadUri2, RDF.REST, RDF.NIL);
+        Statement testStatement9 = vf.createStatement(testListHeadIRI2, RDF.REST, RDF.NIL);
         this.testGraph.add(testStatement9);
 
         try {
@@ -1744,16 +1745,16 @@ public class RdfListUtilTest {
         Statement testStatement1 = vf.createStatement(testListHeadBNode1, RDF.FIRST, testObjectLiteral1);
         this.testGraph.add(testStatement1);
 
-        Statement testStatement2 = vf.createStatement(testListHeadBNode1, RDF.REST, testListHeadUri1);
+        Statement testStatement2 = vf.createStatement(testListHeadBNode1, RDF.REST, testListHeadIRI1);
         this.testGraph.add(testStatement2);
 
-        Statement testStatement3 = vf.createStatement(testListHeadUri1, RDF.FIRST, testObjectUri1);
+        Statement testStatement3 = vf.createStatement(testListHeadIRI1, RDF.FIRST, testObjectIRI1);
         this.testGraph.add(testStatement3);
 
-        Statement testStatement4 = vf.createStatement(testListHeadUri1, RDF.REST, testListHeadBNode2);
+        Statement testStatement4 = vf.createStatement(testListHeadIRI1, RDF.REST, testListHeadBNode2);
         this.testGraph.add(testStatement4);
 
-        Statement testStatement5 = vf.createStatement(testListHeadUri1, RDF.REST, testListHeadUri2);
+        Statement testStatement5 = vf.createStatement(testListHeadIRI1, RDF.REST, testListHeadIRI2);
         this.testGraph.add(testStatement5);
 
         try {
@@ -1776,16 +1777,16 @@ public class RdfListUtilTest {
         Statement testStatement1 = vf.createStatement(testListHeadBNode1, RDF.FIRST, testObjectLiteral1);
         this.testGraph.add(testStatement1);
 
-        Statement testStatement2 = vf.createStatement(testListHeadBNode1, RDF.REST, testListHeadUri1);
+        Statement testStatement2 = vf.createStatement(testListHeadBNode1, RDF.REST, testListHeadIRI1);
         this.testGraph.add(testStatement2);
 
-        Statement testStatement3 = vf.createStatement(testListHeadUri1, RDF.FIRST, testObjectUri1);
+        Statement testStatement3 = vf.createStatement(testListHeadIRI1, RDF.FIRST, testObjectIRI1);
         this.testGraph.add(testStatement3);
 
-        Statement testStatement4 = vf.createStatement(testListHeadUri1, RDF.REST, testListHeadBNode2);
+        Statement testStatement4 = vf.createStatement(testListHeadIRI1, RDF.REST, testListHeadBNode2);
         this.testGraph.add(testStatement4);
 
-        Statement testStatement5 = vf.createStatement(testListHeadUri1, RDF.REST, testListHeadUri2);
+        Statement testStatement5 = vf.createStatement(testListHeadIRI1, RDF.REST, testListHeadIRI2);
         this.testGraph.add(testStatement5);
 
         Statement testStatement6 = vf.createStatement(testListHeadBNode2, RDF.FIRST, testObjectLiteral2);
@@ -1818,7 +1819,7 @@ public class RdfListUtilTest {
         RepositoryConnection rc = repo.getConnection();
         RepositoryGraph g = new RepositoryGraph(rc);
         this.testRdfListUtilDefaults.addListAtNode(
-                this.testSubjectUri1, this.testPredicateUri1, this.testValuesMultipleElements, this.testGraph);
+                this.testSubjectIRI1, this.testPredicateIRI1, this.testValuesMultipleElements, this.testGraph);
         for (Statement s : this.testGraph) {
             g.add(s);
         }
@@ -1832,7 +1833,7 @@ public class RdfListUtilTest {
         // Now proceed with the rest of the test case, using the Repository-based Graph instead of the original
 
         // Match the head
-        final Iterator<Statement> headMatch = g.match(this.testSubjectUri1, this.testPredicateUri1, null);
+        final Iterator<Statement> headMatch = g.match(this.testSubjectIRI1, this.testPredicateIRI1, null);
 
         Assert.assertTrue(headMatch.hasNext());
 
@@ -1904,7 +1905,7 @@ public class RdfListUtilTest {
 
         Assert.assertTrue(restListMatchedStatement2.getObject() instanceof Resource);
 
-        // match the next first node, which should be a URI
+        // match the next first node, which should be a IRI
         final Iterator<Statement> matchFirst3 =
                 g.match((BNode) restListMatchedStatement2.getObject(), RDF.FIRST, null);
 
@@ -1916,11 +1917,11 @@ public class RdfListUtilTest {
 
         Assert.assertFalse(matchFirst3.hasNext());
 
-        Assert.assertTrue(firstListMatchedStatement3.getObject() instanceof URI);
+        Assert.assertTrue(firstListMatchedStatement3.getObject() instanceof IRI);
 
-        assertEquals(this.testObjectUri1, firstListMatchedStatement3.getObject());
+        assertEquals(this.testObjectIRI1, firstListMatchedStatement3.getObject());
 
-        // match the rest link, which should be the URI rdf:nil
+        // match the rest link, which should be the IRI rdf:nil
         final Iterator<Statement> matchRest3 =
                 g.match((BNode) restListMatchedStatement2.getObject(), RDF.REST, null);
 
@@ -1932,7 +1933,7 @@ public class RdfListUtilTest {
 
         Assert.assertFalse(matchRest3.hasNext());
 
-        Assert.assertTrue(restListMatchedStatement3.getObject() instanceof URI);
+        Assert.assertTrue(restListMatchedStatement3.getObject() instanceof IRI);
 
         assertEquals(RDF.NIL, restListMatchedStatement3.getObject());
 

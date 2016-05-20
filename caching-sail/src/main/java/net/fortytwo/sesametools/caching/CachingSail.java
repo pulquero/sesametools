@@ -1,20 +1,20 @@
 
 package net.fortytwo.sesametools.caching;
 
-import org.openrdf.model.Resource;
-import org.openrdf.model.URI;
-import org.openrdf.model.Value;
-import org.openrdf.model.ValueFactory;
-import org.openrdf.sail.Sail;
-import org.openrdf.sail.SailConnection;
-import org.openrdf.sail.SailException;
-import org.openrdf.sail.StackableSail;
-import org.openrdf.sail.helpers.SailBase;
-import org.openrdf.sail.memory.MemoryStore;
-
 import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
+
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.Resource;
+import org.eclipse.rdf4j.model.Value;
+import org.eclipse.rdf4j.model.ValueFactory;
+import org.eclipse.rdf4j.sail.Sail;
+import org.eclipse.rdf4j.sail.SailConnection;
+import org.eclipse.rdf4j.sail.SailException;
+import org.eclipse.rdf4j.sail.StackableSail;
+import org.eclipse.rdf4j.sail.helpers.AbstractSail;
+import org.eclipse.rdf4j.sail.memory.MemoryStore;
 
 /**
  * A <code>Sail</code> which caches statements retrieved from a base <code>Sail</code>
@@ -24,7 +24,7 @@ import java.util.Set;
  */
 // Note: assumes that the value factories of the base Sail and the MemoryStore
 // cache are compatible.
-public class CachingSail extends SailBase implements StackableSail {
+public class CachingSail extends AbstractSail implements StackableSail {
     private static long DEFAULT_CAPACITY = 1000000l;
 
     private boolean cacheSubject, cachePredicate, cacheObject;
@@ -33,7 +33,7 @@ public class CachingSail extends SailBase implements StackableSail {
     private Sail cache;
 
     private Set<Resource> cachedSubjects;
-    private Set<URI> cachedPredicates;
+    private Set<IRI> cachedPredicates;
     private Set<Value> cachedObjects;
 
     private long capacity;
@@ -78,7 +78,7 @@ public class CachingSail extends SailBase implements StackableSail {
         }
 
         if (cachePredicate) {
-            cachedPredicates = new HashSet<URI>();
+            cachedPredicates = new HashSet<IRI>();
         }
 
         if (cacheObject) {
